@@ -1,0 +1,11 @@
+.base_pane {
+    -fx-background-color: #6f4ab6;
+}
+
+.button {
+    -fx-background-color: #56a8e3;
+}
+
+.button:hover{
+    -fx-background-color: #56e3d1;
+}
