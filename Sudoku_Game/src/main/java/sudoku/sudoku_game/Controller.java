@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -27,15 +28,18 @@ public class Controller implements Initializable {
     GameBoard gameboard;
     int player_selected_row = -1;
     int player_selected_col = -1;
+    Alert alert = new Alert(Alert.AlertType.WARNING);
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         System.out.println("Start");
-        gameboard = new GameBoard();
+        gameboard = new GameBoard(9, 50);
         GraphicsContext context = canvas.getGraphicsContext2D();
         drawOnCanvas(context);
     }
-
-
+    public void newGame() {
+        gameboard.newValues();
+        drawOnCanvas(canvas.getGraphicsContext2D());
+    }
     private void drawOnCanvas(GraphicsContext context) {
         context.clearRect(0, 0, 450, 450);
         for (int row = 0; row < 9; row++) {
@@ -72,7 +76,11 @@ public class Controller implements Initializable {
                 }
             }
         }
-
+        context.setStroke(Color.WHITE);
+        for (int i = 1; i <= 2; i++) {
+            context.strokeLine(i * 150, 0, i * 150, 450);
+            context.strokeLine(0, i * 150, 450, i * 150);
+        }
     }
 
     public void canvasMouseClicked() {
@@ -85,6 +93,10 @@ public class Controller implements Initializable {
         });
     }
 
+    public void reset() {
+        gameboard.resetPlayer();
+        drawOnCanvas(canvas.getGraphicsContext2D());
+    }
 
     public void buttonOnePressed() {
         System.out.println(1);
@@ -141,47 +153,22 @@ public class Controller implements Initializable {
     }
 
     public class GameBoard {
-        /* Array that will contain the complete solution to the board */
+        int N;
+        int SRN;
+        int K;
         private int[][] solution;
-        /* Array that will contain ONLY the numbers initially drawn on the board and that the player can't change */
         private int[][] initial;
-        /* Array that will contain player's numbers */
         private int[][] player;
 
-        public GameBoard() {
-            solution = new int[][]
-                    {
-                            {5, 3, 8, 4, 6, 1, 7, 9, 2},
-                            {6, 9, 7, 3, 2, 5, 8, 1, 4},
-                            {2, 1, 4, 7, 8, 9, 5, 6, 3},
-                            {9, 4, 1, 2, 7, 8, 6, 3, 5},
-                            {7, 6, 2, 1, 5, 3, 9, 4, 8},
-                            {8, 5, 3, 9, 4, 6, 1, 2, 7},
-                            {3, 8, 9, 5, 1, 2, 4, 7, 6},
-                            {4, 2, 6, 8, 9, 7, 3, 5, 1},
-                            {1, 7, 5, 6, 3, 4, 2, 8, 9}
-                    };
-
-            // 0's will be rendered as empty space and will be editable by player
-            initial = new int[][]
-                    {
-                            {0, 0, 0, 4, 0, 0, 0, 9, 0},
-                            {6, 0, 7, 0, 0, 0, 8, 0, 4},
-                            {0, 1, 0, 7, 0, 9, 0, 0, 3},
-                            {9, 0, 1, 0, 7, 0, 0, 3, 0},
-                            {0, 0, 2, 0, 0, 0, 9, 0, 0},
-                            {0, 5, 0, 0, 4, 0, 1, 0, 7},
-                            {3, 0, 0, 5, 0, 2, 0, 7, 0},
-                            {4, 0, 6, 0, 0, 0, 3, 0, 1},
-                            {0, 7, 0, 0, 0, 4, 0, 0, 0}
-                    };
-
-            // player's array is initialized as a 9x9 full of zeroes
-            player = new int[9][9];
+        public GameBoard(int N, int K) {
+            this.N = N;
+            this.K = K;
+            this.SRN = (int) Math.sqrt(N);
+            solution = new int[N][N];
+            initial = new int[N][N];
+            player = new int[N][N];
             resetPlayer();
         }
-
-        // returns the solution array
         public int[][] getSolution() {
             return solution;
         }
@@ -207,5 +194,146 @@ public class Controller implements Initializable {
             else
                 System.out.println("Value passed to player falls out of range");
         }
+
+        public void newValues() {
+            System.out.println("New Game");
+            for (int row = 0; row < N; row++) {
+                for (int col = 0; col < N; col++) {
+                    solution[row][col] = 0;
+                    initial[row][col] = 0;
+                    player[row][col] = 0;
+                }
+            }
+            fillDiagonal();
+            fillRemaining(0, SRN);
+            removeKDigits();
+            resetPlayer();
+        }
+
+        // Fill the diagonal SRN number of SRN x SRN matrices
+        void fillDiagonal() {
+            for (int i = 0; i < N; i = i + SRN) {
+                fillBox(i, i);
+            }
+        }
+
+        // Returns false if given 3 x 3 block contains num.
+        boolean unUsedInBox(int rowStart, int colStart, int num) {
+            for (int i = 0; i < SRN; i++)
+                for (int j = 0; j < SRN; j++)
+                    if (solution[rowStart + i][colStart + j] == num)
+                        return false;
+
+            return true;
+        }
+
+        // Fill a 3 x 3 matrix.
+        void fillBox(int row, int col) {
+            int num;
+            for (int i = 0; i < SRN; i++) {
+                for (int j = 0; j < SRN; j++) {
+                    do {
+                        num = randomGenerator(N);
+                    }
+                    while (!unUsedInBox(row, col, num));
+                    solution[row + i][col + j] = num;
+                }
+            }
+            System.out.println("fill box");
+        }
+
+        // Random generator
+        int randomGenerator(int num) {
+            return (int) Math.floor((Math.random() * num + 1));
+        }
+
+        // Check if safe to put in cell
+        boolean CheckIfSafe(int i, int j, int num) {
+            return (unUsedInRow(i, num) &&
+                    unUsedInCol(j, num) &&
+                    unUsedInBox(i - i % SRN, j - j % SRN, num));
+        }
+
+        // check in the row for existence
+        boolean unUsedInRow(int i, int num) {
+            for (int j = 0; j < N; j++)
+                if (solution[i][j] == num)
+                    return false;
+            return true;
+        }
+
+        // check in the row for existence
+        boolean unUsedInCol(int j, int num) {
+            for (int i = 0; i < N; i++)
+                if (solution[i][j] == num)
+                    return false;
+            return true;
+        }
+
+        // A recursive function to fill remaining
+        // matrix
+        boolean fillRemaining(int i, int j) {
+            //  System.out.println(i+" "+j);
+            if (j >= N && i < N - 1) {
+                i = i + 1;
+                j = 0;
+            }
+            if (i >= N && j >= N)
+                return true;
+
+            if (i < SRN) {
+                if (j < SRN)
+                    j = SRN;
+            } else if (i < N - SRN) {
+                if (j == (int) (i / SRN) * SRN)
+                    j = j + SRN;
+            } else {
+                if (j == N - SRN) {
+                    i = i + 1;
+                    j = 0;
+                    if (i >= N)
+                        return true;
+                }
+            }
+
+            for (int num = 1; num <= N; num++) {
+                if (CheckIfSafe(i, j, num)) {
+                    solution[i][j] = num;
+                    if (fillRemaining(i, j + 1))
+                        return true;
+
+                    solution[i][j] = 0;
+                }
+            }
+            return false;
+        }
+
+        // Remove the K no. of digits to
+        // complete game
+        public void removeKDigits() {
+            for (int row = 0; row < N; row++) {
+                for (int col = 0; col < N; col++) {
+                    initial[row][col] = solution[row][col];
+                }
+            }
+            int count = K;
+            while (count != 0) {
+                int cellId = randomGenerator(N * N) - 1;
+
+                // System.out.println(cellId);
+                // extract coordinates i  and j
+                int i = (cellId / N);
+                int j = cellId % N;
+                if (j != 0)
+                    j = j - 1;
+
+                // System.out.println(i+" "+j);
+                if (initial[i][j] != 0) {
+                    count--;
+                    initial[i][j] = 0;
+                }
+            }
+        }
+
     }
 }
