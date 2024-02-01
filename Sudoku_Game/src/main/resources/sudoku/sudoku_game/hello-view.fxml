@@ -17,7 +17,7 @@
         <Button fx:id="button_nine" layoutX="643.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#buttonNinePressed" prefHeight="50.0" prefWidth="50.0" text="9" />
       <Canvas fx:id="canvas" height="460.0" layoutX="7.0" layoutY="10.0" onMouseClicked="#canvasMouseClicked" styleClass="canvas" width="472.0" />
       <Button fx:id="reset" layoutX="521.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#reset" prefHeight="34.0" prefWidth="59.0" text="Reset" />
-      <Button fx:id="check" layoutX="639.0" layoutY="314.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="59.0" text="Check" />
+      <Button fx:id="check" layoutX="639.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#check" prefHeight="34.0" prefWidth="59.0" text="Check" />
       <Button fx:id="newgame" layoutX="569.0" layoutY="377.0" mnemonicParsing="false" onMouseClicked="#newGame" prefHeight="34.0" prefWidth="80.0" text="New Game" />
     </children>
 </Pane>

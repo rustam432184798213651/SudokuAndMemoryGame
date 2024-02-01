@@ -38,8 +38,24 @@ public class Controller implements Initializable {
         drawOnCanvas(context);
     }
     public void newGame() {
+        System.out.println("New Game");
         gameboard.newValues();
+        player_selected_row = player_selected_col = -1;
         drawOnCanvas(canvas.getGraphicsContext2D());
+    }
+
+    public void check(){
+        System.out.println("Check");
+        if (gameboard.check()) {
+            System.out.println("True");
+            line_color = Color.GREEN;
+        } else {
+            System.out.println("False");
+            line_color = Color.RED;
+        }
+        player_selected_row = player_selected_col = -1;
+        drawOnCanvas(canvas.getGraphicsContext2D());
+        line_color = Color.WHITE;
     }
     private void drawOnCanvas(GraphicsContext context) {
         context.clearRect(0, 0, 450, 450);
@@ -95,7 +111,9 @@ public class Controller implements Initializable {
     }
 
     public void reset() {
+        System.out.println("Reset");
         gameboard.resetPlayer();
+        player_selected_row = player_selected_col = -1;
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
@@ -170,13 +188,6 @@ public class Controller implements Initializable {
             player = new int[N][N];
             resetPlayer();
         }
-        public int[][] getSolution() {
-            return solution;
-        }
-
-        public int[][] getInitial() {
-            return initial;
-        }
 
         public void resetPlayer() {
             for (int row = 0; row < 9; row++) {
@@ -196,8 +207,18 @@ public class Controller implements Initializable {
                 System.out.println("Value passed to player falls out of range");
         }
 
+        Boolean check() {
+            for (int row = 0; row < N; row++) {
+                for (int col = 0; col < N; col++) {
+                    if (player[row][col] != solution[row][col]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         public void newValues() {
-            System.out.println("New Game");
             for (int row = 0; row < N; row++) {
                 for (int col = 0; col < N; col++) {
                     solution[row][col] = 0;
@@ -240,7 +261,6 @@ public class Controller implements Initializable {
                     solution[row + i][col + j] = num;
                 }
             }
-            System.out.println("fill box");
         }
 
         // Random generator
@@ -274,7 +294,6 @@ public class Controller implements Initializable {
         // A recursive function to fill remaining
         // matrix
         boolean fillRemaining(int i, int j) {
-            //  System.out.println(i+" "+j);
             if (j >= N && i < N - 1) {
                 i = i + 1;
                 j = 0;
@@ -320,8 +339,6 @@ public class Controller implements Initializable {
             int count = K;
             while (count != 0) {
                 int cellId = randomGenerator(N * N) - 1;
-                // System.out.println(cellId);
-                // extract coordinates i  and j
                 int i = (cellId / N);
                 int j = cellId % N;
                 if (j != 0)
