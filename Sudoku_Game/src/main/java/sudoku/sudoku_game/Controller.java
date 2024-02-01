@@ -28,11 +28,12 @@ public class Controller implements Initializable {
     GameBoard gameboard;
     int player_selected_row = -1;
     int player_selected_col = -1;
+    Color line_color = Color.WHITE;
     Alert alert = new Alert(Alert.AlertType.WARNING);
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         System.out.println("Start");
-        gameboard = new GameBoard(9, 50);
+        gameboard = new GameBoard(9, 45);
         GraphicsContext context = canvas.getGraphicsContext2D();
         drawOnCanvas(context);
     }
@@ -76,7 +77,7 @@ public class Controller implements Initializable {
                 }
             }
         }
-        context.setStroke(Color.WHITE);
+        context.setStroke(line_color);
         for (int i = 1; i <= 2; i++) {
             context.strokeLine(i * 150, 0, i * 150, 450);
             context.strokeLine(0, i * 150, 450, i * 150);
@@ -319,18 +320,27 @@ public class Controller implements Initializable {
             int count = K;
             while (count != 0) {
                 int cellId = randomGenerator(N * N) - 1;
-
                 // System.out.println(cellId);
                 // extract coordinates i  and j
                 int i = (cellId / N);
                 int j = cellId % N;
                 if (j != 0)
                     j = j - 1;
+                Boolean can = (initial[i][j] != 0);
+                for (int k = 0, c1 = 0, c2 = 0; k < N; k++) {
+                    if (initial[i][k] == 0) c1++;
+                    if (initial[k][j] == 0) c2++;
+                    if (c1 >= 7 || c2 >= 7) {
+                        can = false;
+                    }
+                }
 
-                // System.out.println(i+" "+j);
-                if (initial[i][j] != 0) {
+                if (can) {
                     count--;
                     initial[i][j] = 0;
+                } else if (initial[i][N - 1] != 0) {
+                    count--;
+                    initial[i][N - 1] = 0;
                 }
             }
         }
