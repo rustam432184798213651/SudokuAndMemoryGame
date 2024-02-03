@@ -29,11 +29,10 @@ public class Controller implements Initializable {
     int player_selected_row = -1;
     int player_selected_col = -1;
     Color line_color = Color.WHITE;
-    Alert alert = new Alert(Alert.AlertType.WARNING);
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         System.out.println("Start");
-        gameboard = new GameBoard(9, 45);
+        gameboard = new GameBoard(9, 30);
         GraphicsContext context = canvas.getGraphicsContext2D();
         drawOnCanvas(context);
     }
@@ -58,13 +57,22 @@ public class Controller implements Initializable {
         line_color = Color.WHITE;
     }
     private void drawOnCanvas(GraphicsContext context) {
+
+        int initial[][] = gameboard.getInitial();
+        int[][] player = gameboard.getPlayer();
         context.clearRect(0, 0, 450, 450);
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 int position_y = row * 50 + 2;
                 int position_x = col * 50 + 2;
                 int width = 46;
-                context.setFill(Color.rgb(200, 200, 200));
+                if (initial[row][col] != 0) {
+                    context.setFill(Color.rgb(175, 175, 175));
+                } else if (player[row][col] != 0) {
+                    context.setFill(Color.rgb(225, 225, 125));
+                } else {
+                    context.setFill(Color.rgb(225, 225, 225));
+                }
                 context.fillRoundRect(position_x, position_y, width, width, 10, 10);
             }
         }
@@ -74,8 +82,6 @@ public class Controller implements Initializable {
         if (player_selected_col > -1) {
             context.strokeRoundRect(player_selected_col * 50 + 2, player_selected_row * 50 + 2, 46, 46, 10, 10);
         }
-
-        int[][] player = gameboard.getPlayer();
 
         // for loop is the same as before
         for(int row = 0; row<9; row++) {
@@ -119,54 +125,81 @@ public class Controller implements Initializable {
 
     public void buttonOnePressed() {
         System.out.println(1);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(1, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonTwoPressed() {
         System.out.println(2);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(2, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonThreePressed() {
         System.out.println(3);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(3, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonFourPressed() {
         System.out.println(4);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(4, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonFivePressed() {
         System.out.println(5);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(5, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonSixPressed() {
         System.out.println(6);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(6, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonSevenPressed() {
         System.out.println(7);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(7, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonEightPressed() {
         System.out.println(8);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(8, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void buttonNinePressed() {
         System.out.println(9);
+        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
+            return;
+        }
         gameboard.modifyPlayer(9, player_selected_row, player_selected_col);
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
@@ -199,6 +232,9 @@ public class Controller implements Initializable {
 
         public int[][] getPlayer() {
             return player;
+        }
+        public int[][] getInitial() {
+            return initial;
         }
         public void modifyPlayer(int val, int row, int col) {
             if (val >= 0 && val <= 9)
