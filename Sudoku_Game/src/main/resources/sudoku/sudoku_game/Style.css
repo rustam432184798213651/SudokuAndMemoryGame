@@ -1,9 +1,10 @@
 .base_pane {
-    -fx-background-color: #373656;
+    -fx-background-color: #fcae1e;
 }
 
 .button {
-    -fx-background-color: #56a8e3;
+    /*-fx-background-color: #56a8e3; */
+    -fx-background-color: dodgerblue;
 }
 
 .button:hover {
@@ -11,5 +12,6 @@
 }
 
 .canvas {
-    -fx-background-color: #4b5d5a;
+    /*-fx-background-color: #4b5d5a;*/
+    -fx-background-color: amber;
 }
