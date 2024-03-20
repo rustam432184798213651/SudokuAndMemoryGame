@@ -6,15 +6,15 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="720.0" styleClass="base_pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sudoku.sudoku_game.Controller">
     <children>
-        <Button fx:id="one" layoutX="525.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#buttonOnePressed" prefHeight="50.0" prefWidth="50.0" text="1" />
-        <Button fx:id="two" layoutX="584.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#buttonTwoPressed" prefHeight="50.0" prefWidth="50.0" text="2" />
-        <Button fx:id="three" layoutX="643.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#buttonThreePressed" prefHeight="50.0" prefWidth="50.0" text="3" />
-        <Button fx:id="four" layoutX="525.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#buttonFourPressed" prefHeight="50.0" prefWidth="50.0" text="4" />
-        <Button fx:id="five" layoutX="584.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#buttonFivePressed" prefHeight="50.0" prefWidth="50.0" text="5" />
-        <Button fx:id="six" layoutX="643.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#buttonSixPressed" prefHeight="50.0" prefWidth="50.0" text="6" />
-        <Button fx:id="seven" layoutX="525.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#buttonSevenPressed" prefHeight="50.0" prefWidth="50.0" text="7" />
-        <Button fx:id="eight" layoutX="584.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#buttonEightPressed" prefHeight="50.0" prefWidth="50.0" text="8" />
-        <Button fx:id="nine" layoutX="643.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#buttonNinePressed" prefHeight="50.0" prefWidth="50.0" text="9" />
+        <Button fx:id="one" layoutX="525.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="1" />
+        <Button fx:id="two" layoutX="584.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="2" />
+        <Button fx:id="three" layoutX="643.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="3" />
+        <Button fx:id="four" layoutX="525.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="4" />
+        <Button fx:id="five" layoutX="584.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="5" />
+        <Button fx:id="six" layoutX="643.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="6" />
+        <Button fx:id="seven" layoutX="525.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#handleMousePress"  prefHeight="50.0" prefWidth="50.0" text="7" />
+        <Button fx:id="eight" layoutX="584.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="8" />
+        <Button fx:id="nine" layoutX="643.0" layoutY="226.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="9" />
       <Canvas fx:id="canvas" height="460.0" layoutX="7.0" layoutY="10.0" onMouseClicked="#canvasMouseClicked" styleClass="canvas" width="450.0" />
       <Button fx:id="reset" layoutX="521.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#reset" prefHeight="34.0" prefWidth="59.0" text="Reset" />
       <Button fx:id="check" layoutX="639.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#check" prefHeight="34.0" prefWidth="59.0" text="Check" />

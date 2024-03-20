@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -123,85 +124,13 @@ public class Controller implements Initializable {
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
-    public void buttonOnePressed() {
-        System.out.println(1);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(1, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonTwoPressed() {
-        System.out.println(2);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(2, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonThreePressed() {
-        System.out.println(3);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(3, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonFourPressed() {
-        System.out.println(4);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(4, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonFivePressed() {
-        System.out.println(5);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(5, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonSixPressed() {
-        System.out.println(6);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(6, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonSevenPressed() {
-        System.out.println(7);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(7, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonEightPressed() {
-        System.out.println(8);
-        if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
-            return;
-        }
-        gameboard.modifyPlayer(8, player_selected_row, player_selected_col);
-        drawOnCanvas(canvas.getGraphicsContext2D());
-    }
-
-    public void buttonNinePressed() {
-        System.out.println(9);
+    @FXML public void handleMousePress(MouseEvent event) {
+        String value = ((Button)event.getSource()).getText();
         if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
             return;
         }
         try {
-            gameboard.modifyPlayer(9, player_selected_row, player_selected_col);
+            gameboard.modifyPlayer(Integer.parseInt(value), player_selected_row, player_selected_col);
         }
         catch(ValueError error) {
             System.err.println(error.getMessage());
