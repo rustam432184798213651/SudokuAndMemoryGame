@@ -13,17 +13,15 @@ import javafx.scene.text.Font;
 
 public class Controller implements Initializable {
 
-    @FXML
-    Button button_one;
-    @FXML
-    Button button_two;
-    @FXML Button button_three;
-    @FXML Button button_four;
-    @FXML Button button_five;
-    @FXML Button button_six;
-    @FXML Button button_seven;
-    @FXML Button button_eight;
-    @FXML Button button_nine;
+    @FXML Button one;
+    @FXML Button two;
+    @FXML Button three;
+    @FXML Button four;
+    @FXML Button five;
+    @FXML Button six;
+    @FXML Button seven;
+    @FXML Button eight;
+    @FXML Button nine;
     @FXML Canvas canvas;
     GameBoard gameboard;
     int player_selected_row = -1;
