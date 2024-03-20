@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+
 public class Controller implements Initializable {
 
     @FXML Button one;
@@ -50,12 +51,13 @@ public class Controller implements Initializable {
             System.out.println("False");
             line_color = Color.RED;
         }
+
         player_selected_row = player_selected_col = -1;
         drawOnCanvas(canvas.getGraphicsContext2D());
         line_color = Color.WHITE;
     }
     private void drawOnCanvas(GraphicsContext context) {
-
+        int width = 40;
         int initial[][] = gameboard.getInitial();
         int[][] player = gameboard.getPlayer();
         context.clearRect(0, 0, 450, 450);
@@ -63,22 +65,22 @@ public class Controller implements Initializable {
             for (int col = 0; col < 9; col++) {
                 int position_y = row * 50 + 2;
                 int position_x = col * 50 + 2;
-                int width = 46;
+
                 if (initial[row][col] != 0) {
-                    context.setFill(Color.rgb(175, 175, 175));
+                    context.setFill(Color.rgb(255, 69, 0)); // New Game input
                 } else if (player[row][col] != 0) {
-                    context.setFill(Color.rgb(225, 225, 125));
+                    context.setFill(Color.rgb(255, 69, 0)); // Player input
                 } else {
-                    context.setFill(Color.rgb(225, 225, 225));
+                    context.setFill(Color.rgb( 255, 94, 14)); // Empty input
                 }
-                context.fillRoundRect(position_x, position_y, width, width, 10, 10);
+                context.fillRoundRect(position_x, position_y, width, width, 15, 15);
             }
         }
 
         context.setStroke(Color.rgb(193, 87, 87));
         context.setLineWidth(3);
         if (player_selected_col > -1) {
-            context.strokeRoundRect(player_selected_col * 50 + 2, player_selected_row * 50 + 2, 46, 46, 10, 10);
+            context.strokeRoundRect(player_selected_col * 50 + 2, player_selected_row * 50 + 2, width, width, 10, 10);
         }
 
         // for loop is the same as before
@@ -198,7 +200,13 @@ public class Controller implements Initializable {
         if (gameboard.getInitial()[player_selected_row][player_selected_col] != 0) {
             return;
         }
-        gameboard.modifyPlayer(9, player_selected_row, player_selected_col);
+        try {
+            gameboard.modifyPlayer(9, player_selected_row, player_selected_col);
+        }
+        catch(ValueError error) {
+            System.err.println(error.getMessage());
+            System.exit(1);
+        }
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
@@ -234,11 +242,11 @@ public class Controller implements Initializable {
         public int[][] getInitial() {
             return initial;
         }
-        public void modifyPlayer(int val, int row, int col) {
+        public void modifyPlayer(int val, int row, int col) throws ValueError {
             if (val >= 0 && val <= 9)
                 player[row][col] = val;
             else
-                System.out.println("Value passed to player falls out of range");
+                throw new ValueError("Value passed to player falls out of range");
         }
 
         Boolean check() {
