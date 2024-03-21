@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
@@ -47,6 +48,7 @@ public class Main extends Application {
         int numberOfRows = 4;
         int numberOfColumns = 5;
         ArrayList<ArrayList<String>> initialNumbers = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<Button>> buttons = new ArrayList<ArrayList<Button>>();
         Random rand = new Random();
         for(int i = 0; i < numberOfRows; i++){
             initialNumbers.add(new ArrayList<String>());
@@ -56,12 +58,14 @@ public class Main extends Application {
         }
 
         for(int i = 0; i < numberOfRows; i++) {
+            buttons.add(new ArrayList<Button>());
             for(int j = 0; j < numberOfColumns; j++) {
-                Button btn = new Button(initialNumbers.get(i).get(j));
+                buttons.get(i).add(new Button(initialNumbers.get(i).get(j)));
+                Button btn = buttons.get(i).get(j);
                 btn.setMinSize(buttonSize, buttonSize);
                 btn.setMaxSize(buttonSize, buttonSize);
                 btn.setOnKeyPressed(new ButtonListener());
-                Grid.add(btn, j, i);
+                Grid.add(btn, j, i); // Second argument is column and third is row
             }
         }
 
