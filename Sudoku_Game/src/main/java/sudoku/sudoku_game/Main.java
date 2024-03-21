@@ -66,6 +66,7 @@ public class Main extends Application {
         }
 
         Scene scene = new Scene(Grid, width, height);
+        scene.getStylesheets().add(getClass().getResource("MemoryTest.css").toExternalForm());
         stage.setTitle("MemoryTest");
         stage.setScene(scene);
         stage.setResizable(false);
