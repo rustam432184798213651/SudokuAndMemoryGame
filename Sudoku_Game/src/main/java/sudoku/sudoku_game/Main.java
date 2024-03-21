@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 1;
+    int numberOfQuestionsForEachTest = 2;
     // For Logical test
     Text currentQuestion = new Text();
     int currentIndex = 0;
@@ -48,7 +48,7 @@ public class Main extends Application {
     }
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
-        //questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
+        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
 //        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
 //        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
 //        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
@@ -64,41 +64,8 @@ public class Main extends Application {
 
 
 
-    public boolean fillMatrixWithRandomNumbers (ArrayList<ArrayList<String>> matrix) {
-        if(matrix.isEmpty()) {
-            return false;
-        }
-        Random rand = new Random();
-        for(int i = 0; i < matrix.size(); i++) {
-            for(int j = 0; j < matrix.getFirst().size(); j++) {
-                matrix.get(i).set(j, Integer.toString(rand.nextInt(10)));
-            }
-        }
-        return true;
-    }
-    public boolean fillButtonsWithNumbersFromMatrix (ArrayList<ArrayList<Button>> buttons, ArrayList<ArrayList<String>> matrix) {
-        if(buttons.isEmpty()) {
-            return false;
-        }
-        Random rand = new Random();
-        for(int i = 0; i < buttons.size(); i++) {
-            for(int j = 0; j < buttons.getFirst().size(); j++) {
-                buttons.get(i).get(j).setText(matrix.get(i).get(j));
-            }
-        }
-        return true;
-    }
-    public void hideAllNumbers(ArrayList<ArrayList<Button>> buttons) {
-        if(buttons.isEmpty())
-        {
-            return;
-        }
-        for(int i = 0; i < buttons.size(); i++) {
-            for(int j = 0; j < buttons.getFirst().size(); j++) {
-                buttons.get(i).get(j).setText("");
-            }
-        }
-    }
+
+
     public boolean allButtonsAreFull(ArrayList<ArrayList<Button>> buttons) {
         for(int i = 0; i < buttons.size(); i++) {
             for(int j = 0; j < buttons.getFirst().size(); j++) {
@@ -112,7 +79,7 @@ public class Main extends Application {
     public boolean checkIfCorrect(ArrayList<ArrayList<Button>> buttons, ArrayList<ArrayList<String>> matrix) {
         for(int i = 0; i < buttons.size(); i++) {
             for(int j = 0; j < buttons.getFirst().size(); j++) {
-                if (buttons.get(i).get(j).getText().equals(matrix.get(i).get(j))) {
+                if (!buttons.get(i).get(j).getText().equals(matrix.get(i).get(j))) {
                     return false;
                 }
             }
@@ -121,6 +88,7 @@ public class Main extends Application {
     }
     public class Tests {
         Stage stage = null;
+        boolean canPress = false;
         Tests(Stage stage_a) {
             stage = stage_a;
         }
@@ -132,10 +100,56 @@ public class Main extends Application {
         int heightOfAnswerSectionForMemoryTest = 200;
         String CssFileForLogicalTest = "LogicalTest.css";
         String titleForLogicalTest = "LogicalTest";
+        public void hideAllNumbers(ArrayList<ArrayList<Button>> buttons) {
+            if(buttons.isEmpty())
+            {
+                return;
+            }
+            for(int i = 0; i < buttons.size(); i++) {
+                for(int j = 0; j < buttons.getFirst().size(); j++) {
+                    buttons.get(i).get(j).setText("");
+                }
+            }
+            canPress = true;
+
+        }
+        public boolean fillMatrixWithRandomNumbers (ArrayList<ArrayList<String>> matrix) {
+            if(matrix.isEmpty()) {
+                return false;
+            }
+            Random rand = new Random();
+            for(int i = 0; i < matrix.size(); i++) {
+                for(int j = 0; j < matrix.getFirst().size(); j++) {
+                    matrix.get(i).set(j, Integer.toString(rand.nextInt(10)));
+                }
+            }
+            return true;
+        }
+        public boolean fillButtonsWithNumbersFromMatrix (ArrayList<ArrayList<Button>> buttons, ArrayList<ArrayList<String>> matrix) {
+            if(buttons.isEmpty()) {
+                return false;
+            }
+            Random rand = new Random();
+            for(int i = 0; i < buttons.size(); i++) {
+                for(int j = 0; j < buttons.getFirst().size(); j++) {
+                    buttons.get(i).get(j).setText(matrix.get(i).get(j));
+                }
+            }
+            canPress = false;
+            return true;
+        }
+        class ButtonListener implements EventHandler<KeyEvent> {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(canPress && !keyEvent.getText().isEmpty() && Character.isDigit(keyEvent.getText().charAt(0))) {
+                    Button btn = (Button)keyEvent.getSource();
+                    btn.setText(keyEvent.getText());
+                }
+            }
+
+        }
         public void run() {
             GridPane Grid = new GridPane();
-            int width = 450;
-            int height = 450;
             int buttonSize = 150;
             int numberOfRows = 3;
             int numberOfColumns = 3;
@@ -186,7 +200,7 @@ public class Main extends Application {
                 Timeline timeline = new Timeline();
 
                 // Define the animation or tasks using KeyFrames
-                KeyFrame keyFrame = new KeyFrame(Duration.seconds(2), event -> {
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(2.5), event -> {
                     if(numberOfTests.get() == 0) {
                         timeline.stop();
                         stage.close();
@@ -199,32 +213,12 @@ public class Main extends Application {
                         Agent agent = new Agent();
                         agent.setId("agent");
                         stack.getChildren().addAll(agent, currentQuestion);
-//                        int rows = 2;
-//                        int columns = 2;
-//                        ArrayList<ArrayList<Button>> buttonsForLogicalTest = new ArrayList<ArrayList<Button>>();
-//                        int buttonForAnswerHeight = 80;
-//                        int buttonForAnswerWidth  = 200;
-//                        for(int i = 0; i < rows; i++) {
-//                            buttonsForLogicalTest.add(new ArrayList<Button>());
-//                            for(int j = 0; j < columns; j++) {
-//                                Button btn = new Button(Integer.toString(i*columns + j));
-//                                btn.setOnMouseClicked(new AnswerButton());
-//                                btn.setMinSize(buttonForAnswerWidth, buttonForAnswerHeight);
-//                                btn.setMaxSize(buttonForAnswerWidth, buttonForAnswerHeight);
-//                                buttonsForLogicalTest.get(i).add(btn);
-//                                GridForLogicalTest.add(btn, j, i);
-//                            }
-//                        }
-//                        GridForLogicalTest.setId("AnswerButton");
-//                        int gap = 6;
-//                        GridForLogicalTest.setHgap(gap);
-//                        GridForLogicalTest.setVgap(gap);
 
                         answer.setAlignment(Pos.TOP_LEFT);
                         answer.setMinSize(widthOfAnswerSectionForMemoryTest, heightOfAnswerSectionForMemoryTest);
                         answer.setMaxSize(widthOfAnswerSectionForMemoryTest, heightOfAnswerSectionForMemoryTest);
                         answer.setText(defaultTextForAnswerSectionForMemoryTest);
-
+                        answer.setId("AnswerButton");
                         borderPane.setCenter(answer);
                         borderPane.setTop(stack);
                         Button nextButtonForLogicTest = new Button("Next");
@@ -250,6 +244,7 @@ public class Main extends Application {
                                 if (checkIfCorrect(buttons, GivenNumbers)) {
                                     numberOfCorrectAnswersForMemoryTest += 1;
                                 }
+                                System.out.println(numberOfCorrectAnswersForMemoryTest);
                                 numberOfTests.set(numberOfTests.get() - 1);
 
                                 fillMatrixWithRandomNumbers(GivenNumbers);
@@ -380,51 +375,26 @@ public class Main extends Application {
     }
 
 
-    class ButtonListener implements EventHandler<KeyEvent> {
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            if(!keyEvent.getText().isEmpty() && Character.isDigit(keyEvent.getText().charAt(0))) {
-                Button btn = (Button)keyEvent.getSource();
-                btn.setText(keyEvent.getText());
-            }
-        }
 
-    }
 
 
     class NextButton implements  EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent mouseEvent) {
             if(answer.getText().equals(correctAnswer)) {
+
                 numberOfCorrectAnswers += 1;
             }
 
-
-
+            if(currentIndex < questions.size()) {
+                currentIndex += 1;
+            }
             if(currentIndex != questions.size()) {
                 currentQuestion.setText(questions.get(currentIndex).get("question"));
                 correctAnswer = questions.get(currentIndex).get("answer");
                 answer.setText("");
             }
-            if(currentIndex < questions.size()) {
-                currentIndex += 1;
-            }
-        }
-    }
 
-    public class MyRunnable implements Runnable {
-
-        public MyRunnable(Object parameter) {
-            try {
-                Thread.sleep(2000);
-            }
-            catch(InterruptedException er) {
-                System.err.println(er.getMessage());
-            }
-            hideAllNumbers((ArrayList<ArrayList<Button>>)parameter);
-        }
-
-        public void run() {
         }
     }
     public class Agent extends Rectangle {
