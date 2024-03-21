@@ -130,7 +130,7 @@ public class Main extends Application {
     public boolean checkIfCorrect(ArrayList<ArrayList<Button>> buttons, ArrayList<ArrayList<String>> matrix) {
         for(int i = 0; i < buttons.size(); i++) {
             for(int j = 0; j < buttons.getFirst().size(); j++) {
-                if (buttons.get(i).get(j).toString().equals(matrix.get(i).get(j))) {
+                if (buttons.get(i).get(j).getText().equals(matrix.get(i).get(j))) {
                     return false;
                 }
             }
@@ -287,7 +287,7 @@ public class Main extends Application {
                     if(numberOfQuestionsForEachTest == currentIndex) {
                         timelineForGame.stop();
                         stage.close();
-                        if(numberOfCorrectAnswersForMemoryTest > numberOfCorrectAnswers) {
+                        if(numberOfCorrectAnswersForMemoryTest >= numberOfCorrectAnswers) {
                             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("View.fxml"));
                             try {
                                 Scene SCENE = new Scene(fxmlLoader.load(), 720, 480);

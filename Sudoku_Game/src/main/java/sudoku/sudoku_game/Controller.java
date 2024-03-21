@@ -148,6 +148,56 @@ public class Controller implements Initializable {
         private int[][] initial;
         private int[][] player;
 
+        public boolean isValidSudoku(char[][] board) {
+            if (board == null || board.length != 9 || board[0].length != 9) {
+                throw new IllegalArgumentException("Input is invalid");
+            }
+
+            int rowColBox = 0;
+
+            for (int i = 0; i < 9; i++) { // Index of row, column and box
+                for (int j = 0; j < 9; j++) {
+                    // Check ith row
+                    rowColBox = validateAndAddCell(board[i][j], 0, rowColBox);
+                    if (rowColBox == -1) {
+                        return false;
+                    }
+
+                    // Check ith column
+                    rowColBox = validateAndAddCell(board[j][i], 1, rowColBox);
+                    if (rowColBox == -1) {
+                        return false;
+                    }
+
+                    // Check ith box
+                    int boxRow = 3 * (i / 3) + (j / 3);
+                    int colRow = 3 * (i % 3) + (j % 3);
+                    rowColBox = validateAndAddCell(board[boxRow][colRow], 2, rowColBox);
+                    if (rowColBox == -1) {
+                        return false;
+                    }
+                }
+                rowColBox = 0;
+            }
+
+            return true;
+        }
+
+        private int validateAndAddCell(char c, int type, int rowColBox) {
+            if (c == '.') {
+                return rowColBox;
+            }
+            if (c < '1' || c > '9') {
+                return -1;
+            }
+
+            int bitIdx = type * 9 + (c - '1');
+            if (((rowColBox >> bitIdx) & 1) == 1) {
+                return -1;
+            }
+
+            return rowColBox | (1 << bitIdx);
+        }
         public GameBoard(int N, int K) {
             this.N = N;
             this.K = K;
@@ -180,14 +230,14 @@ public class Controller implements Initializable {
         }
 
         Boolean check() {
+            char[][] board = new char[9][9];
+
             for (int row = 0; row < N; row++) {
                 for (int col = 0; col < N; col++) {
-                    if (player[row][col] != solution[row][col]) {
-                        return false;
-                    }
+                    board[row][col] = (char)(player[row][col] + '0');
                 }
             }
-            return true;
+            return isValidSudoku(board);
         }
 
         public void newValues() {
