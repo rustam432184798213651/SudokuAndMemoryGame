@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,24 +24,19 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 2;
+    int numberOfQuestionsForEachTest = 1;
     // For Logical test
     Text currentQuestion = new Text();
     int currentIndex = 0;
     String correctAnswer = "";
     int numberOfCorrectAnswers = 0;
-    int numberOfQuestions = 1;
     TextField answer = new TextField();
     ArrayList<Dictionary<String, String>> questions = new ArrayList<Dictionary<String, String>>();
 
@@ -52,7 +48,7 @@ public class Main extends Application {
     }
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Оля"));
-        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
+        //questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
 //        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
 //        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
 //        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
@@ -64,7 +60,6 @@ public class Main extends Application {
 
     // For memory test
     int numberOfCorrectAnswersForMemoryTest = 0;
-
 
 
 
@@ -192,7 +187,7 @@ public class Main extends Application {
         AtomicInteger numberOfTests = new AtomicInteger(numberOfQuestionsForEachTest);
         fillMatrixWithRandomNumbers(GivenNumbers);
         fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
-
+        fillQuestions();
         try {
                 AtomicBoolean createdByUser = new AtomicBoolean(false);
                 Timeline timeline = new Timeline();
@@ -203,10 +198,9 @@ public class Main extends Application {
                         timeline.stop();
                         stage.close();
                         BorderPane borderPane = new BorderPane();
-                        currentQuestion = new Text(questions.get(0).get("question"));
-                        correctAnswer = questions.get(0).get("answer");
+                        currentQuestion = new Text(questions.getFirst().get("question"));
+                        correctAnswer = questions.getFirst().get("answer");
                         currentQuestion.setId("CurrentQuestion");
-                        currentIndex += 1;
                         currentQuestion.setWrappingWidth(500);
                         StackPane stack = new StackPane();
                         Agent agent = new Agent();
@@ -238,7 +232,7 @@ public class Main extends Application {
                         answer.setMaxSize(400, 200);
                         answer.setOnKeyReleased(new AnswerListener());
                         answer.setText("");
-                        fillQuestions();
+
                         borderPane.setCenter(answer);
                         borderPane.setTop(stack);
                         Button nextButtonForLogicTest = new Button("Next");
@@ -293,7 +287,7 @@ public class Main extends Application {
                     if(numberOfQuestionsForEachTest == currentIndex) {
                         timelineForGame.stop();
                         stage.close();
-                        if(numberOfCorrectAnswersForMemoryTest <= numberOfCorrectAnswers) {
+                        if(numberOfCorrectAnswersForMemoryTest > numberOfCorrectAnswers) {
                             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("View.fxml"));
                             try {
                                 Scene SCENE = new Scene(fxmlLoader.load(), 720, 480);
@@ -307,7 +301,18 @@ public class Main extends Application {
                         }
                         else {
 
-                        }
+                            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ViewForMemoryGame.fxml"));
+                            try{
+                                Scene SCENE = new Scene(fxmlLoader.load());
+                                stage.setTitle("Hello!");
+                                stage.setScene(SCENE);
+                                stage.show();
+                            }
+                            catch(java.io.IOException er) {
+                                System.err.println(er.getMessage());
+                            }
+
+                       }
 
                     }
                 });
@@ -365,16 +370,16 @@ public class Main extends Application {
             if(answer.getText().equals(correctAnswer)) {
                 numberOfCorrectAnswers += 1;
             }
-            if(currentIndex < questions.size()) {
-                currentIndex += 1;
-            }
+
 
 
             if(currentIndex != questions.size()) {
                 currentQuestion.setText(questions.get(currentIndex).get("question"));
                 correctAnswer = questions.get(currentIndex).get("answer");
-                numberOfQuestions -= 1;
                 answer.setText("");
+            }
+            if(currentIndex < questions.size()) {
+                currentIndex += 1;
             }
         }
     }
