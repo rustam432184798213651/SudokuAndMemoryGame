@@ -3,29 +3,20 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.Timer;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
 
@@ -83,6 +74,26 @@ public class Main extends Application {
             }
         }
     }
+    public boolean allButtonsAreFull(ArrayList<ArrayList<Button>> buttons) {
+        for(int i = 0; i < buttons.size(); i++) {
+            for(int j = 0; j < buttons.getFirst().size(); j++) {
+                if(buttons.get(i).get(j).getText().isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean checkIfCorrect(ArrayList<ArrayList<Button>> buttons, ArrayList<ArrayList<String>> matrix) {
+        for(int i = 0; i < buttons.size(); i++) {
+            for(int j = 0; j < buttons.getFirst().size(); j++) {
+                if (buttons.get(i).get(j).toString().equals(matrix.get(i).get(j))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
         //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MemoryTestView.fxml"));
@@ -128,30 +139,46 @@ public class Main extends Application {
 
 
 
+        hideAllNumbers(buttons);
 
+        AtomicInteger numberOfTests = new AtomicInteger(3);
+        AtomicInteger numberOfCorrectAnswers = new AtomicInteger(0);
+        fillMatrixWithRandomNumbers(GivenNumbers);
+        fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
 
-        int numberOfTests = 1;
-        boolean timerPassed = false;
-        int numberOfCorrectAnswers = 0;
-        for(int i = 0; i < numberOfTests; i++) {
-            fillMatrixWithRandomNumbers(GivenNumbers);
-            fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
-            try {
-                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), ev -> {
-                    hideAllNumbers(buttons);
-                }));
-                timeline.setCycleCount(Animation.INDEFINITE);
-                timeline.play();
-                timerPassed = true;
+        try {
+            AtomicBoolean createdByUser = new AtomicBoolean(false);
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), ev -> {
+                if (numberOfTests.get() == 0)
+                {
+                    stage.close();
+
+                }
+
+                if(allButtonsAreFull(buttons)) {
+                    if(createdByUser.get()) {
+                        if(checkIfCorrect(buttons, GivenNumbers)) {
+                            numberOfCorrectAnswers.set(numberOfCorrectAnswers.get() + 1);
+                        }
+                        numberOfTests.set(numberOfTests.get() - 1);
+
+                        fillMatrixWithRandomNumbers(GivenNumbers);
+                        fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
+                        createdByUser.set(false);
+                    }
+                    else {
+                        hideAllNumbers(buttons);
+                        createdByUser.set(true);
+                    }
+                }
+            }));
+            timeline.setCycleCount(Animation.INDEFINITE);
+            timeline.play();
             }
             catch(Exception er) {
                 System.err.println(er.getMessage());
             }
-//            while(!timerPassed || allButtonsAreFull()) {
-//            }
-//            timerPassed = false;
-//            numberOfCorrectAnswers += checkIfCorrect();
-        }
+
 
 
 
@@ -171,7 +198,7 @@ public class Main extends Application {
     class ButtonListener implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {
-            if(Character.isDigit(keyEvent.getText().charAt(0))) {
+            if(!keyEvent.getText().isEmpty() && Character.isDigit(keyEvent.getText().charAt(0))) {
                 Button btn = (Button)keyEvent.getSource();
                 btn.setText(keyEvent.getText());
             }
