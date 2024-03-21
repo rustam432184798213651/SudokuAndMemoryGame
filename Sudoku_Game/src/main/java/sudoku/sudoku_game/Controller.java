@@ -87,12 +87,13 @@ public class Controller implements Initializable {
         // for loop is the same as before
         for(int row = 0; row<9; row++) {
             for(int col = 0; col<9; col++) {
-
-                int position_y = row * 50 + 35;
-                int position_x = col * 50 + 15;
+                double ratio = (width*1.0) / 46.0;
+                int position_y = (int)Math.round(row * 50 + 35*ratio);
+                int position_x = (int)Math.round(col * 50 + 15*ratio);
 
                 context.setFill(Color.BLACK);
                 context.setFont(new Font(30));
+
 
                 if(player[row][col]!=0) {
                     String txt = Integer.toString(player[row][col]);
