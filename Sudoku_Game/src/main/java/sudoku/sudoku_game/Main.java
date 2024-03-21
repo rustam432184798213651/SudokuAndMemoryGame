@@ -1,5 +1,7 @@
 package sudoku.sudoku_game;
-
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,14 +13,22 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.util.Timer;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReferenceArray;
+
 public class Main extends Application {
+
     class EditableButton extends Button {
         TextField tf = new TextField();
 
@@ -38,8 +48,43 @@ public class Main extends Application {
             });
         }
     }
+    public boolean fillMatrixWithRandomNumbers (ArrayList<ArrayList<String>> matrix) {
+        if(matrix.isEmpty()) {
+            return false;
+        }
+        Random rand = new Random();
+        for(int i = 0; i < matrix.size(); i++) {
+            for(int j = 0; j < matrix.getFirst().size(); j++) {
+                matrix.get(i).set(j, Integer.toString(rand.nextInt(10)));
+            }
+        }
+        return true;
+    }
+    public boolean fillButtonsWithNumbersFromMatrix (ArrayList<ArrayList<Button>> buttons, ArrayList<ArrayList<String>> matrix) {
+        if(buttons.isEmpty()) {
+            return false;
+        }
+        Random rand = new Random();
+        for(int i = 0; i < buttons.size(); i++) {
+            for(int j = 0; j < buttons.getFirst().size(); j++) {
+                buttons.get(i).get(j).setText(matrix.get(i).get(j));
+            }
+        }
+        return true;
+    }
+    public void hideAllNumbers(ArrayList<ArrayList<Button>> buttons) {
+        if(buttons.isEmpty())
+        {
+            return;
+        }
+        for(int i = 0; i < buttons.size(); i++) {
+            for(int j = 0; j < buttons.getFirst().size(); j++) {
+                buttons.get(i).get(j).setText("");
+            }
+        }
+    }
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, InterruptedException {
         //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MemoryTestView.fxml"));
         GridPane Grid = new GridPane();
         int width = 750;
@@ -47,20 +92,26 @@ public class Main extends Application {
         int buttonSize = 150;
         int numberOfRows = 4;
         int numberOfColumns = 5;
-        ArrayList<ArrayList<String>> initialNumbers = new ArrayList<ArrayList<String>>();
+        Button nextButton = new Button("Next");
+        nextButton.setId("nextButton");
+        nextButton.setMaxSize(50, 50);
+        nextButton.setMinSize(50, 50);
+        ArrayList<ArrayList<String>> GivenNumbers = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<Button>> buttons = new ArrayList<ArrayList<Button>>();
-        Random rand = new Random();
         for(int i = 0; i < numberOfRows; i++){
-            initialNumbers.add(new ArrayList<String>());
+            GivenNumbers.add(new ArrayList<String>());
             for(int j = 0; j < numberOfColumns; j++) {
-                initialNumbers.get(i).add(Integer.toString(rand.nextInt(10)));
+                GivenNumbers.get(i).add("0");
             }
         }
+
+        // Add next button
+
 
         for(int i = 0; i < numberOfRows; i++) {
             buttons.add(new ArrayList<Button>());
             for(int j = 0; j < numberOfColumns; j++) {
-                buttons.get(i).add(new Button(initialNumbers.get(i).get(j)));
+                buttons.get(i).add(new Button());
                 Button btn = buttons.get(i).get(j);
                 btn.setMinSize(buttonSize, buttonSize);
                 btn.setMaxSize(buttonSize, buttonSize);
@@ -68,13 +119,42 @@ public class Main extends Application {
                 Grid.add(btn, j, i); // Second argument is column and third is row
             }
         }
-
         Scene scene = new Scene(Grid, width, height);
         scene.getStylesheets().add(getClass().getResource("MemoryTest.css").toExternalForm());
         stage.setTitle("MemoryTest");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
+
+
+
+
+
+        int numberOfTests = 1;
+        boolean timerPassed = false;
+        int numberOfCorrectAnswers = 0;
+        for(int i = 0; i < numberOfTests; i++) {
+            fillMatrixWithRandomNumbers(GivenNumbers);
+            fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
+            try {
+                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), ev -> {
+                    hideAllNumbers(buttons);
+                }));
+                timeline.setCycleCount(Animation.INDEFINITE);
+                timeline.play();
+                timerPassed = true;
+            }
+            catch(Exception er) {
+                System.err.println(er.getMessage());
+            }
+//            while(!timerPassed || allButtonsAreFull()) {
+//            }
+//            timerPassed = false;
+//            numberOfCorrectAnswers += checkIfCorrect();
+        }
+
+
+
 
 //        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("View.fxml"));
 //        Scene scene = new Scene(fxmlLoader.load(), 720, 480);
@@ -87,6 +167,7 @@ public class Main extends Application {
 //        stage.show();
     }
 
+
     class ButtonListener implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {
@@ -96,6 +177,22 @@ public class Main extends Application {
             }
         }
 
+    }
+
+    public class MyRunnable implements Runnable {
+
+        public MyRunnable(Object parameter) {
+            try {
+                Thread.sleep(2000);
+            }
+            catch(InterruptedException er) {
+                System.err.println(er.getMessage());
+            }
+            hideAllNumbers((ArrayList<ArrayList<Button>>)parameter);
+        }
+
+        public void run() {
+        }
     }
 
     public static void main(String[] args) {
