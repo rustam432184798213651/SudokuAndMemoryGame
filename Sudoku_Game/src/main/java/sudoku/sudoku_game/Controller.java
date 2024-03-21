@@ -36,25 +36,20 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        System.out.println("Start");
         gameboard = new GameBoard(9, 30);
         GraphicsContext context = canvas.getGraphicsContext2D();
         drawOnCanvas(context);
     }
     public void newGame() {
-        System.out.println("New Game");
         gameboard.newValues();
         player_selected_row = player_selected_col = -1;
         drawOnCanvas(canvas.getGraphicsContext2D());
     }
 
     public void check(){
-        System.out.println("Check");
         if (gameboard.check()) {
-            System.out.println("True");
             line_color = Color.GREEN;
         } else {
-            System.out.println("False");
             line_color = Color.RED;
         }
 
@@ -124,7 +119,6 @@ public class Controller implements Initializable {
     }
 
     public void reset() {
-        System.out.println("Reset");
         gameboard.resetPlayer();
         player_selected_row = player_selected_col = -1;
         drawOnCanvas(canvas.getGraphicsContext2D());

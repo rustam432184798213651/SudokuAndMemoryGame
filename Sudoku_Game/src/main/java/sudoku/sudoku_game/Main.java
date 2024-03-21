@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 2;
+    int numberOfQuestionsForEachTest = 9;
     // For Logical test
     Text currentQuestion = new Text();
     int currentIndex = 0;
@@ -49,13 +49,13 @@ public class Main extends Application {
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
         questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
-//        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
-//        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
-//        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
-//        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
-//        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
-//        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
-//        questions.add(generateQuestionWithAnswer("Человек научился у пауков строить подвесные мосты, у кошек перенял диафрагму в фотоаппарате и светоотражающие дорожные знаки. А какое изобретение появилось благодаря змеям?", "Шприц"));
+        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
+        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
+        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
+        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
+        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
+        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
+        questions.add(generateQuestionWithAnswer("Человек научился у пауков строить подвесные мосты, у кошек перенял диафрагму в фотоаппарате и светоотражающие дорожные знаки. А какое изобретение появилось благодаря змеям?", "Шприц"));
     }
 
     // For memory test
@@ -244,7 +244,7 @@ public class Main extends Application {
                                 if (checkIfCorrect(buttons, GivenNumbers)) {
                                     numberOfCorrectAnswersForMemoryTest += 1;
                                 }
-                                System.out.println(numberOfCorrectAnswersForMemoryTest);
+
                                 numberOfTests.set(numberOfTests.get() - 1);
 
                                 fillMatrixWithRandomNumbers(GivenNumbers);
