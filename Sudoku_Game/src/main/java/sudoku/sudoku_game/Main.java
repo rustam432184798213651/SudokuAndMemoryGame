@@ -120,60 +120,68 @@ public class Main extends Application {
         return true;
     }
     public class Tests {
-        Tests() {
-
+        Stage stage = null;
+        Tests(Stage stage_a) {
+            stage = stage_a;
         }
-    }
-    @Override
-    public void start(Stage stage) throws IOException, InterruptedException {
-
-        GridPane Grid = new GridPane();
-        int width = 450;
-        int height = 450;
-        int buttonSize = 150;
-        int numberOfRows = 3;
-        int numberOfColumns = 3;
-        Button nextButton = new Button("Next");
-        nextButton.setId("nextButton");
-        nextButton.setMaxSize(50, 50);
-        nextButton.setMinSize(50, 50);
-        ArrayList<ArrayList<String>> GivenNumbers = new ArrayList<ArrayList<String>>();
-        ArrayList<ArrayList<Button>> buttons = new ArrayList<ArrayList<Button>>();
-        for(int i = 0; i < numberOfRows; i++){
-            GivenNumbers.add(new ArrayList<String>());
-            for(int j = 0; j < numberOfColumns; j++) {
-                GivenNumbers.get(i).add("0");
+        int widthForMemoryTest = 450;
+        int heightForMemoryTest = 450;
+        String titleForMemoryTest = "MemoryTest";
+        String CssFileForMemoryTest = "MemoryTest.css";
+        int widthOfAnswerSectionForMemoryTest = 400;
+        int heightOfAnswerSectionForMemoryTest = 200;
+        String CssFileForLogicalTest = "LogicalTest.css";
+        String titleForLogicalTest = "LogicalTest";
+        public void run() {
+            GridPane Grid = new GridPane();
+            int width = 450;
+            int height = 450;
+            int buttonSize = 150;
+            int numberOfRows = 3;
+            int numberOfColumns = 3;
+            String defaultTextForAnswerSectionForMemoryTest = "";
+            Button nextButton = new Button("Next");
+            nextButton.setId("nextButton");
+            nextButton.setMaxSize(50, 50);
+            nextButton.setMinSize(50, 50);
+            ArrayList<ArrayList<String>> GivenNumbers = new ArrayList<ArrayList<String>>();
+            ArrayList<ArrayList<Button>> buttons = new ArrayList<ArrayList<Button>>();
+            for(int i = 0; i < numberOfRows; i++){
+                GivenNumbers.add(new ArrayList<String>());
+                for(int j = 0; j < numberOfColumns; j++) {
+                    GivenNumbers.get(i).add("0");
+                }
             }
-        }
 
 
-        for(int i = 0; i < numberOfRows; i++) {
-            buttons.add(new ArrayList<Button>());
-            for(int j = 0; j < numberOfColumns; j++) {
-                buttons.get(i).add(new Button());
-                Button btn = buttons.get(i).get(j);
-                btn.setMinSize(buttonSize, buttonSize);
-                btn.setMaxSize(buttonSize, buttonSize);
-                btn.setOnKeyPressed(new ButtonListener());
-                Grid.add(btn, j, i); // Second argument is column and third is row
+            for(int i = 0; i < numberOfRows; i++) {
+                buttons.add(new ArrayList<Button>());
+                for(int j = 0; j < numberOfColumns; j++) {
+                    buttons.get(i).add(new Button());
+                    Button btn = buttons.get(i).get(j);
+                    btn.setMinSize(buttonSize, buttonSize);
+                    btn.setMaxSize(buttonSize, buttonSize);
+                    btn.setOnKeyPressed(new ButtonListener());
+                    Grid.add(btn, j, i); // Second argument is column and third is row
+                }
             }
-        }
-        Scene scene = new Scene(Grid, width, height);
-        scene.getStylesheets().add(getClass().getResource("MemoryTest.css").toExternalForm());
-        stage.setTitle("MemoryTest");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+
+            Scene scene = new Scene(Grid, widthForMemoryTest, heightForMemoryTest);
+            scene.getStylesheets().add(getClass().getResource(CssFileForMemoryTest).toExternalForm());
+            stage.setTitle(titleForMemoryTest);
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
 
 
 
-        hideAllNumbers(buttons);
+            hideAllNumbers(buttons);
 
-        AtomicInteger numberOfTests = new AtomicInteger(numberOfQuestionsForEachTest);
-        fillMatrixWithRandomNumbers(GivenNumbers);
-        fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
-        fillQuestions();
-        try {
+            AtomicInteger numberOfTests = new AtomicInteger(numberOfQuestionsForEachTest);
+            fillMatrixWithRandomNumbers(GivenNumbers);
+            fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
+            fillQuestions();
+            try {
                 AtomicBoolean createdByUser = new AtomicBoolean(false);
                 Timeline timeline = new Timeline();
 
@@ -213,9 +221,9 @@ public class Main extends Application {
 //                        GridForLogicalTest.setVgap(gap);
 
                         answer.setAlignment(Pos.TOP_LEFT);
-                        answer.setMinSize(400, 200);
-                        answer.setMaxSize(400, 200);
-                        answer.setText("");
+                        answer.setMinSize(widthOfAnswerSectionForMemoryTest, heightOfAnswerSectionForMemoryTest);
+                        answer.setMaxSize(widthOfAnswerSectionForMemoryTest, heightOfAnswerSectionForMemoryTest);
+                        answer.setText(defaultTextForAnswerSectionForMemoryTest);
 
                         borderPane.setCenter(answer);
                         borderPane.setTop(stack);
@@ -229,8 +237,8 @@ public class Main extends Application {
 
                         borderPane.setBottom(nextButtonForLogicTest);
                         Scene sceneForLogicalTest = new Scene(borderPane, 750, 600);
-                        sceneForLogicalTest.getStylesheets().add(getClass().getResource("LogicalTest.css").toExternalForm());
-                        stage.setTitle("LogicalTest");
+                        sceneForLogicalTest.getStylesheets().add(getClass().getResource(CssFileForLogicalTest).toExternalForm());
+                        stage.setTitle(titleForLogicalTest);
                         stage.setScene(sceneForLogicalTest);
                         stage.setResizable(false);
                         stage.show();
@@ -264,13 +272,21 @@ public class Main extends Application {
                 // Start the Timeline
                 timeline.play();
 
-               Game game = new Game(stage);
-               game.runGame();
 
+
+            }
+            catch(Exception er) {
+                System.err.println(er.getMessage());
+            }
         }
-        catch(Exception er) {
-            System.err.println(er.getMessage());
-        }
+    }
+    @Override
+    public void start(Stage stage) throws IOException, InterruptedException {
+
+        Tests tests = new Tests(stage);
+        tests.run();
+        Game game = new Game(stage);
+        game.runGame();
 
 
 
@@ -341,7 +357,7 @@ public class Main extends Application {
                 if(numberOfQuestionsForEachTest == currentIndex) {
                     timelineForGame.stop();
                     stage.close();
-                    if(numberOfCorrectAnswersForMemoryTest >= numberOfCorrectAnswers) {
+                    if(numberOfCorrectAnswersForMemoryTest > numberOfCorrectAnswers) {
                        Sudoku sd = new Sudoku(stage);
                        sd.run();
                     }
