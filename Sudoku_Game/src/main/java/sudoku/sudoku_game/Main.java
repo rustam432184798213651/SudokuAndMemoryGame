@@ -147,7 +147,7 @@ public class Main extends Application {
 
         hideAllNumbers(buttons);
 
-        AtomicInteger numberOfTests = new AtomicInteger(2);
+        AtomicInteger numberOfTests = new AtomicInteger(0);
         AtomicInteger numberOfCorrectAnswers = new AtomicInteger(0);
         fillMatrixWithRandomNumbers(GivenNumbers);
         fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
@@ -170,17 +170,33 @@ public class Main extends Application {
                         int rows = 2;
                         int columns = 2;
                         ArrayList<ArrayList<Button>> buttonsForLogicalTest = new ArrayList<ArrayList<Button>>();
+                        int buttonForAnswerHeight = 80;
+                        int buttonForAnswerWidth  = 200;
                         for(int i = 0; i < rows; i++) {
                             buttonsForLogicalTest.add(new ArrayList<Button>());
                             for(int j = 0; j < columns; j++) {
-                                buttonsForLogicalTest.get(i).add(new Button(""));
+                                Button btn = new Button(Integer.toString(i*columns + j));
+                                btn.setMinSize(buttonForAnswerWidth, buttonForAnswerHeight);
+                                btn.setMaxSize(buttonForAnswerWidth, buttonForAnswerHeight);
+                                buttonsForLogicalTest.get(i).add(btn);
+                                GridForLogicalTest.add(btn, j, i);
                             }
                         }
-                        borderPane.setBottom(GridForLogicalTest);
+                        GridForLogicalTest.setId("AnswerButton");
+                        int gap = 6;
+                        GridForLogicalTest.setHgap(gap);
+                        GridForLogicalTest.setVgap(gap);
+                        borderPane.setCenter(GridForLogicalTest);
                         borderPane.setTop(stack);
+                        Button nextButtonForLogicTest = new Button("Next");
+                        nextButtonForLogicTest.setId("test");
+
+                        nextButtonForLogicTest.setMinSize(800, 50);
+                        nextButtonForLogicTest.setMaxSize(800, 50);
+                        borderPane.setBottom(nextButtonForLogicTest);
                         Scene sceneForLogicalTest = new Scene(borderPane, width, height);
                         sceneForLogicalTest.getStylesheets().add(getClass().getResource("LogicalTest.css").toExternalForm());
-                        stage.setTitle("MemoryTest");
+                        stage.setTitle("LogicalTest");
                         stage.setScene(sceneForLogicalTest);
                         stage.setResizable(false);
                         stage.show();
@@ -259,12 +275,10 @@ public class Main extends Application {
     public class Agent extends Rectangle {
 
         public Agent() {
-            setWidth(60);
-            setHeight(60);
-            setArcWidth(60);
-            setArcHeight(60);
-            setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.BLUEVIOLET);
+            setWidth(500);
+            setHeight(350);
+            setFill(Color.GREY.deriveColor(0, 1.2, 1, 0.6));
+            setStroke(Color.BLACK);
         }
     }
 

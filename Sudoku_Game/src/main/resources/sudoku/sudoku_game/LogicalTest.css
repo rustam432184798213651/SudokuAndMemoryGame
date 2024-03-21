@@ -1,0 +1,14 @@
+#AnswerButton {
+    -fx-font-size: 10;
+    -fx-alignment: "center";
+    -fx-padding: 0;
+    -fx-margin: 0;
+}
+
+#test {
+    -fx-alignment: "bottom-center";
+    -fx-padding: 0;
+    -fx-start-margin: 0;
+    -fx-font-size: 30;
+
+}
