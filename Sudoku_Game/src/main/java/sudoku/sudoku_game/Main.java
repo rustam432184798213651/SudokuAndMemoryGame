@@ -203,8 +203,10 @@ public class Main extends Application {
                         timeline.stop();
                         stage.close();
                         BorderPane borderPane = new BorderPane();
-                        currentQuestion = new Text("Harry Potter is a magician!");
+                        currentQuestion = new Text(questions.get(0).get("question"));
+                        correctAnswer = questions.get(0).get("answer");
                         currentQuestion.setId("CurrentQuestion");
+                        currentIndex += 1;
                         currentQuestion.setWrappingWidth(500);
                         StackPane stack = new StackPane();
                         Agent agent = new Agent();
