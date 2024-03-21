@@ -63,25 +63,7 @@ public class Main extends Application {
 
 
 
-    class EditableButton extends Button {
-        TextField tf = new TextField();
 
-        public EditableButton(String text) {
-            setText(text);
-            setOnMouseClicked(e -> {
-                tf.setText(getText());
-                setText("");
-                setGraphic(tf);
-            });
-
-            tf.setOnAction(ae -> {
-//              if (validateText(tf.getText())) {// this is where you would validate the text
-                setText(tf.getText());
-                setGraphic(null);
-//            }
-            });
-        }
-    }
     public boolean fillMatrixWithRandomNumbers (ArrayList<ArrayList<String>> matrix) {
         if(matrix.isEmpty()) {
             return false;
@@ -137,6 +119,11 @@ public class Main extends Application {
         }
         return true;
     }
+    public class Tests {
+        Tests() {
+
+        }
+    }
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
 
@@ -158,8 +145,6 @@ public class Main extends Application {
                 GivenNumbers.get(i).add("0");
             }
         }
-
-        // Add next button
 
 
         for(int i = 0; i < numberOfRows; i++) {
@@ -230,7 +215,6 @@ public class Main extends Application {
                         answer.setAlignment(Pos.TOP_LEFT);
                         answer.setMinSize(400, 200);
                         answer.setMaxSize(400, 200);
-                        answer.setOnKeyReleased(new AnswerListener());
                         answer.setText("");
 
                         borderPane.setCenter(answer);
@@ -280,55 +264,13 @@ public class Main extends Application {
                 // Start the Timeline
                 timeline.play();
 
-                // Start of needed game
-                Timeline timelineForGame = new Timeline();
-
-                KeyFrame keyFrameForGame = new KeyFrame(Duration.seconds(2), event-> {
-                    if(numberOfQuestionsForEachTest == currentIndex) {
-                        timelineForGame.stop();
-                        stage.close();
-                        if(numberOfCorrectAnswersForMemoryTest >= numberOfCorrectAnswers) {
-                            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("View.fxml"));
-                            try {
-                                Scene SCENE = new Scene(fxmlLoader.load(), 720, 480);
-                                SCENE.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
-                                stage.setScene(SCENE);
-                                stage.setResizable(false);
-                                stage.show();
-                            } catch (java.io.IOException er) {
-                                System.err.println(er.getMessage());
-                            }
-                        }
-                        else {
-
-                            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ViewForMemoryGame.fxml"));
-                            try{
-                                Scene SCENE = new Scene(fxmlLoader.load());
-                                stage.setTitle("Hello!");
-                                stage.setScene(SCENE);
-                                stage.show();
-                            }
-                            catch(java.io.IOException er) {
-                                System.err.println(er.getMessage());
-                            }
-
-                       }
-
-                    }
-                });
-                // Add the KeyFrame to the Timeline
-                timelineForGame.getKeyFrames().add(keyFrameForGame);
-
-                // Set the number of cycles (-1 for indefinite loop)
-                timelineForGame.setCycleCount(Timeline.INDEFINITE);
-
-                // Start the Timeline
-                timelineForGame.play();
+               Game game = new Game(stage);
+               game.runGame();
 
         }
-            catch(Exception er) {
-                System.err.println(er.getMessage());
-            }
+        catch(Exception er) {
+            System.err.println(er.getMessage());
+        }
 
 
 
@@ -343,6 +285,84 @@ public class Main extends Application {
 //        stage.show();
     }
 
+    public class Sudoku {
+        Stage stage = null;
+        int width = 720;
+        int height = 480;
+        String ViewFileName = "View.fxml";
+        String CssFileName = "Style.css";
+        Sudoku(Stage stage_a) {
+            stage = stage_a;
+        }
+        public void run() {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(ViewFileName));
+            try {
+                Scene SCENE = new Scene(fxmlLoader.load(), width, height);
+                SCENE.getStylesheets().add(getClass().getResource(CssFileName).toExternalForm());
+                stage.setScene(SCENE);
+                stage.setResizable(false);
+                stage.show();
+            } catch (java.io.IOException er) {
+                System.err.println(er.getMessage());
+            }
+        }
+    }
+    public class MemoryGame {
+        Stage stage = null;
+        String ViewFileName = "ViewForMemoryGame.fxml";
+        MemoryGame(Stage stage_a) {
+            stage = stage_a;
+        }
+        public void run() {
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(ViewFileName));
+            try{
+                Scene SCENE = new Scene(fxmlLoader.load());
+                stage.setTitle("Memory Game");
+                stage.setScene(SCENE);
+                stage.show();
+            }
+            catch(java.io.IOException er) {
+                System.err.println(er.getMessage());
+            }
+        }
+    }
+    public class Game {
+        Stage stage = null;
+
+        double DurationSeconds = 2;
+        Game(Stage stage_a) {
+            stage = stage_a;
+        }
+        public void runGame() {
+            // Start of needed game
+            Timeline timelineForGame = new Timeline();
+
+            KeyFrame keyFrameForGame = new KeyFrame(Duration.seconds(DurationSeconds), event-> {
+                if(numberOfQuestionsForEachTest == currentIndex) {
+                    timelineForGame.stop();
+                    stage.close();
+                    if(numberOfCorrectAnswersForMemoryTest >= numberOfCorrectAnswers) {
+                       Sudoku sd = new Sudoku(stage);
+                       sd.run();
+                    }
+                    else {
+                        MemoryGame mg = new MemoryGame(stage);
+                        mg.run();
+                    }
+
+                }
+            });
+            // Add the KeyFrame to the Timeline
+            timelineForGame.getKeyFrames().add(keyFrameForGame);
+
+            // Set the number of cycles (-1 for indefinite loop)
+            timelineForGame.setCycleCount(Timeline.INDEFINITE);
+
+            // Start the Timeline
+            timelineForGame.play();
+        }
+    }
+
 
     class ButtonListener implements EventHandler<KeyEvent> {
         @Override
@@ -354,14 +374,6 @@ public class Main extends Application {
         }
 
     }
-
-    class AnswerListener implements  EventHandler<KeyEvent> {
-        @Override
-        public void handle(KeyEvent keyEvent) {
-            //choosenAnswer = ((TextField)keyEvent.getSource()).getText();
-        }
-    }
-
 
 
     class NextButton implements  EventHandler<MouseEvent> {
