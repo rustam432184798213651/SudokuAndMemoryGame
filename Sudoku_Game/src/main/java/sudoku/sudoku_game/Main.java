@@ -47,7 +47,7 @@ public class Main extends Application {
         return dict;
     }
     public void fillQuestions() {
-        questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Оля"));
+        questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
         //questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
 //        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
 //        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
@@ -141,11 +141,11 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException, InterruptedException {
 
         GridPane Grid = new GridPane();
-        int width = 750;
-        int height = 600;
+        int width = 450;
+        int height = 450;
         int buttonSize = 150;
-        int numberOfRows = 4;
-        int numberOfColumns = 5;
+        int numberOfRows = 3;
+        int numberOfColumns = 3;
         Button nextButton = new Button("Next");
         nextButton.setId("nextButton");
         nextButton.setMaxSize(50, 50);
@@ -244,7 +244,7 @@ public class Main extends Application {
 
 
                         borderPane.setBottom(nextButtonForLogicTest);
-                        Scene sceneForLogicalTest = new Scene(borderPane, width, height);
+                        Scene sceneForLogicalTest = new Scene(borderPane, 750, 600);
                         sceneForLogicalTest.getStylesheets().add(getClass().getResource("LogicalTest.css").toExternalForm());
                         stage.setTitle("LogicalTest");
                         stage.setScene(sceneForLogicalTest);

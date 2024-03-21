@@ -2,12 +2,15 @@ package sudoku.sudoku_game;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -29,6 +32,8 @@ public class Controller implements Initializable {
     int player_selected_row = -1;
     int player_selected_col = -1;
     Color line_color = Color.WHITE;
+
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         System.out.println("Start");
