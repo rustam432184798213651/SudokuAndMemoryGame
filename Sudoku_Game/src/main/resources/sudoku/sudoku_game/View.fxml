@@ -6,6 +6,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="720.0" styleClass="base_pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sudoku.sudoku_game.Controller">
     <children>
+
         <Button fx:id="one" layoutX="525.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="1" />
         <Button fx:id="two" layoutX="584.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="2" />
         <Button fx:id="three" layoutX="643.0" layoutY="107.0" mnemonicParsing="false" onMouseClicked="#handleMousePress" prefHeight="50.0" prefWidth="50.0" text="3" />

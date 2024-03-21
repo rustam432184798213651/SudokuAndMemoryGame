@@ -4,10 +4,14 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -18,6 +22,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -25,6 +34,39 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
+    int numberOfQuestionsForEachTest = 2;
+    // For Logical test
+    Text currentQuestion = new Text();
+    int currentIndex = 0;
+    String correctAnswer = "";
+    int numberOfCorrectAnswers = 0;
+    int numberOfQuestions = 1;
+    TextField answer = new TextField();
+    ArrayList<Dictionary<String, String>> questions = new ArrayList<Dictionary<String, String>>();
+
+    public Dictionary<String, String> generateQuestionWithAnswer(String question, String answer) {
+        Dictionary<String, String> dict= new Hashtable<>();
+        dict.put("question", question);
+        dict.put("answer", answer);
+        return dict;
+    }
+    public void fillQuestions() {
+        questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Оля"));
+        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
+//        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
+//        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
+//        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
+//        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
+//        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
+//        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
+//        questions.add(generateQuestionWithAnswer("Человек научился у пауков строить подвесные мосты, у кошек перенял диафрагму в фотоаппарате и светоотражающие дорожные знаки. А какое изобретение появилось благодаря змеям?", "Шприц"));
+    }
+
+    // For memory test
+    int numberOfCorrectAnswersForMemoryTest = 0;
+
+
+
 
     class EditableButton extends Button {
         TextField tf = new TextField();
@@ -102,7 +144,7 @@ public class Main extends Application {
     }
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
-        //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MemoryTestView.fxml"));
+
         GridPane Grid = new GridPane();
         int width = 750;
         int height = 600;
@@ -147,8 +189,7 @@ public class Main extends Application {
 
         hideAllNumbers(buttons);
 
-        AtomicInteger numberOfTests = new AtomicInteger(0);
-        AtomicInteger numberOfCorrectAnswers = new AtomicInteger(0);
+        AtomicInteger numberOfTests = new AtomicInteger(numberOfQuestionsForEachTest);
         fillMatrixWithRandomNumbers(GivenNumbers);
         fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
 
@@ -162,37 +203,50 @@ public class Main extends Application {
                         timeline.stop();
                         stage.close();
                         BorderPane borderPane = new BorderPane();
-                        GridPane GridForLogicalTest = new GridPane();
-                        Text text = new Text("Harry Potter is a magician!");
+                        currentQuestion = new Text("Harry Potter is a magician!");
+                        currentQuestion.setId("CurrentQuestion");
+                        currentQuestion.setWrappingWidth(500);
                         StackPane stack = new StackPane();
                         Agent agent = new Agent();
-                        stack.getChildren().addAll(agent, text);
-                        int rows = 2;
-                        int columns = 2;
-                        ArrayList<ArrayList<Button>> buttonsForLogicalTest = new ArrayList<ArrayList<Button>>();
-                        int buttonForAnswerHeight = 80;
-                        int buttonForAnswerWidth  = 200;
-                        for(int i = 0; i < rows; i++) {
-                            buttonsForLogicalTest.add(new ArrayList<Button>());
-                            for(int j = 0; j < columns; j++) {
-                                Button btn = new Button(Integer.toString(i*columns + j));
-                                btn.setMinSize(buttonForAnswerWidth, buttonForAnswerHeight);
-                                btn.setMaxSize(buttonForAnswerWidth, buttonForAnswerHeight);
-                                buttonsForLogicalTest.get(i).add(btn);
-                                GridForLogicalTest.add(btn, j, i);
-                            }
-                        }
-                        GridForLogicalTest.setId("AnswerButton");
-                        int gap = 6;
-                        GridForLogicalTest.setHgap(gap);
-                        GridForLogicalTest.setVgap(gap);
-                        borderPane.setCenter(GridForLogicalTest);
+                        agent.setId("agent");
+                        stack.getChildren().addAll(agent, currentQuestion);
+//                        int rows = 2;
+//                        int columns = 2;
+//                        ArrayList<ArrayList<Button>> buttonsForLogicalTest = new ArrayList<ArrayList<Button>>();
+//                        int buttonForAnswerHeight = 80;
+//                        int buttonForAnswerWidth  = 200;
+//                        for(int i = 0; i < rows; i++) {
+//                            buttonsForLogicalTest.add(new ArrayList<Button>());
+//                            for(int j = 0; j < columns; j++) {
+//                                Button btn = new Button(Integer.toString(i*columns + j));
+//                                btn.setOnMouseClicked(new AnswerButton());
+//                                btn.setMinSize(buttonForAnswerWidth, buttonForAnswerHeight);
+//                                btn.setMaxSize(buttonForAnswerWidth, buttonForAnswerHeight);
+//                                buttonsForLogicalTest.get(i).add(btn);
+//                                GridForLogicalTest.add(btn, j, i);
+//                            }
+//                        }
+//                        GridForLogicalTest.setId("AnswerButton");
+//                        int gap = 6;
+//                        GridForLogicalTest.setHgap(gap);
+//                        GridForLogicalTest.setVgap(gap);
+
+                        answer.setAlignment(Pos.TOP_LEFT);
+                        answer.setMinSize(400, 200);
+                        answer.setMaxSize(400, 200);
+                        answer.setOnKeyReleased(new AnswerListener());
+                        answer.setText("");
+                        fillQuestions();
+                        borderPane.setCenter(answer);
                         borderPane.setTop(stack);
                         Button nextButtonForLogicTest = new Button("Next");
+                        nextButtonForLogicTest.setOnMouseClicked(new NextButton());
                         nextButtonForLogicTest.setId("test");
 
                         nextButtonForLogicTest.setMinSize(800, 50);
                         nextButtonForLogicTest.setMaxSize(800, 50);
+
+
                         borderPane.setBottom(nextButtonForLogicTest);
                         Scene sceneForLogicalTest = new Scene(borderPane, width, height);
                         sceneForLogicalTest.getStylesheets().add(getClass().getResource("LogicalTest.css").toExternalForm());
@@ -202,19 +256,21 @@ public class Main extends Application {
                         stage.show();
 
                     }
-                    if (allButtonsAreFull(buttons)) {
-                        if (createdByUser.get()) {
-                            if (checkIfCorrect(buttons, GivenNumbers)) {
-                                numberOfCorrectAnswers.set(numberOfCorrectAnswers.get() + 1);
-                            }
-                            numberOfTests.set(numberOfTests.get() - 1);
+                    else{
+                        if (allButtonsAreFull(buttons)) {
+                            if (createdByUser.get()) {
+                                if (checkIfCorrect(buttons, GivenNumbers)) {
+                                    numberOfCorrectAnswersForMemoryTest += 1;
+                                }
+                                numberOfTests.set(numberOfTests.get() - 1);
 
-                            fillMatrixWithRandomNumbers(GivenNumbers);
-                            fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
-                            createdByUser.set(false);
-                        } else {
-                            hideAllNumbers(buttons);
-                            createdByUser.set(true);
+                                fillMatrixWithRandomNumbers(GivenNumbers);
+                                fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
+                                createdByUser.set(false);
+                            } else {
+                                hideAllNumbers(buttons);
+                                createdByUser.set(true);
+                            }
                         }
                     }
                 });
@@ -227,7 +283,42 @@ public class Main extends Application {
 
                 // Start the Timeline
                 timeline.play();
-           }
+
+                // Start of needed game
+                Timeline timelineForGame = new Timeline();
+
+                KeyFrame keyFrameForGame = new KeyFrame(Duration.seconds(2), event-> {
+                    if(numberOfQuestionsForEachTest == currentIndex) {
+                        timelineForGame.stop();
+                        stage.close();
+                        if(numberOfCorrectAnswersForMemoryTest <= numberOfCorrectAnswers) {
+                            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("View.fxml"));
+                            try {
+                                Scene SCENE = new Scene(fxmlLoader.load(), 720, 480);
+                                SCENE.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
+                                stage.setScene(SCENE);
+                                stage.setResizable(false);
+                                stage.show();
+                            } catch (java.io.IOException er) {
+                                System.err.println(er.getMessage());
+                            }
+                        }
+                        else {
+
+                        }
+
+                    }
+                });
+                // Add the KeyFrame to the Timeline
+                timelineForGame.getKeyFrames().add(keyFrameForGame);
+
+                // Set the number of cycles (-1 for indefinite loop)
+                timelineForGame.setCycleCount(Timeline.INDEFINITE);
+
+                // Start the Timeline
+                timelineForGame.play();
+
+        }
             catch(Exception er) {
                 System.err.println(er.getMessage());
             }
@@ -257,6 +348,35 @@ public class Main extends Application {
 
     }
 
+    class AnswerListener implements  EventHandler<KeyEvent> {
+        @Override
+        public void handle(KeyEvent keyEvent) {
+            //choosenAnswer = ((TextField)keyEvent.getSource()).getText();
+        }
+    }
+
+
+
+    class NextButton implements  EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+            if(answer.getText().equals(correctAnswer)) {
+                numberOfCorrectAnswers += 1;
+            }
+            if(currentIndex < questions.size()) {
+                currentIndex += 1;
+            }
+
+
+            if(currentIndex != questions.size()) {
+                currentQuestion.setText(questions.get(currentIndex).get("question"));
+                correctAnswer = questions.get(currentIndex).get("answer");
+                numberOfQuestions -= 1;
+                answer.setText("");
+            }
+        }
+    }
+
     public class MyRunnable implements Runnable {
 
         public MyRunnable(Object parameter) {
@@ -277,7 +397,7 @@ public class Main extends Application {
         public Agent() {
             setWidth(500);
             setHeight(350);
-            setFill(Color.GREY.deriveColor(0, 1.2, 1, 0.6));
+            setFill(Color.rgb(211, 211, 211));
             setStroke(Color.BLACK);
         }
     }

@@ -12,3 +12,8 @@
     -fx-font-size: 30;
 
 }
+
+#CurrentQuestion {
+    -fx-text-alignment: "center";
+    -fx-font-size: 20;
+}
