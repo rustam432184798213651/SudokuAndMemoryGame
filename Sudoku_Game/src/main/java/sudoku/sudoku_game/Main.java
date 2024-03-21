@@ -8,7 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -141,45 +147,74 @@ public class Main extends Application {
 
         hideAllNumbers(buttons);
 
-        AtomicInteger numberOfTests = new AtomicInteger(3);
+        AtomicInteger numberOfTests = new AtomicInteger(2);
         AtomicInteger numberOfCorrectAnswers = new AtomicInteger(0);
         fillMatrixWithRandomNumbers(GivenNumbers);
         fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
 
         try {
-            AtomicBoolean createdByUser = new AtomicBoolean(false);
-            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), ev -> {
-                if (numberOfTests.get() == 0)
-                {
-                    stage.close();
+                AtomicBoolean createdByUser = new AtomicBoolean(false);
+                Timeline timeline = new Timeline();
 
-                }
-
-                if(allButtonsAreFull(buttons)) {
-                    if(createdByUser.get()) {
-                        if(checkIfCorrect(buttons, GivenNumbers)) {
-                            numberOfCorrectAnswers.set(numberOfCorrectAnswers.get() + 1);
+                // Define the animation or tasks using KeyFrames
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(2), event -> {
+                    if(numberOfTests.get() == 0) {
+                        timeline.stop();
+                        stage.close();
+                        BorderPane borderPane = new BorderPane();
+                        GridPane GridForLogicalTest = new GridPane();
+                        Text text = new Text("Harry Potter is a magician!");
+                        StackPane stack = new StackPane();
+                        Agent agent = new Agent();
+                        stack.getChildren().addAll(agent, text);
+                        int rows = 2;
+                        int columns = 2;
+                        ArrayList<ArrayList<Button>> buttonsForLogicalTest = new ArrayList<ArrayList<Button>>();
+                        for(int i = 0; i < rows; i++) {
+                            buttonsForLogicalTest.add(new ArrayList<Button>());
+                            for(int j = 0; j < columns; j++) {
+                                buttonsForLogicalTest.get(i).add(new Button(""));
+                            }
                         }
-                        numberOfTests.set(numberOfTests.get() - 1);
+                        borderPane.setBottom(GridForLogicalTest);
+                        borderPane.setTop(stack);
+                        Scene sceneForLogicalTest = new Scene(borderPane, width, height);
+                        sceneForLogicalTest.getStylesheets().add(getClass().getResource("LogicalTest.css").toExternalForm());
+                        stage.setTitle("MemoryTest");
+                        stage.setScene(sceneForLogicalTest);
+                        stage.setResizable(false);
+                        stage.show();
 
-                        fillMatrixWithRandomNumbers(GivenNumbers);
-                        fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
-                        createdByUser.set(false);
                     }
-                    else {
-                        hideAllNumbers(buttons);
-                        createdByUser.set(true);
+                    if (allButtonsAreFull(buttons)) {
+                        if (createdByUser.get()) {
+                            if (checkIfCorrect(buttons, GivenNumbers)) {
+                                numberOfCorrectAnswers.set(numberOfCorrectAnswers.get() + 1);
+                            }
+                            numberOfTests.set(numberOfTests.get() - 1);
+
+                            fillMatrixWithRandomNumbers(GivenNumbers);
+                            fillButtonsWithNumbersFromMatrix(buttons, GivenNumbers);
+                            createdByUser.set(false);
+                        } else {
+                            hideAllNumbers(buttons);
+                            createdByUser.set(true);
+                        }
                     }
-                }
-            }));
-            timeline.setCycleCount(Animation.INDEFINITE);
-            timeline.play();
-            }
+                });
+
+                // Add the KeyFrame to the Timeline
+                timeline.getKeyFrames().add(keyFrame);
+
+                // Set the number of cycles (-1 for indefinite loop)
+                timeline.setCycleCount(Timeline.INDEFINITE);
+
+                // Start the Timeline
+                timeline.play();
+           }
             catch(Exception er) {
                 System.err.println(er.getMessage());
             }
-
-
 
 
 
@@ -219,6 +254,17 @@ public class Main extends Application {
         }
 
         public void run() {
+        }
+    }
+    public class Agent extends Rectangle {
+
+        public Agent() {
+            setWidth(60);
+            setHeight(60);
+            setArcWidth(60);
+            setArcHeight(60);
+            setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
+            setStroke(Color.BLUEVIOLET);
         }
     }
 
