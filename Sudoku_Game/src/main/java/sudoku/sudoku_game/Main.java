@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 1;
+    int numberOfQuestionsForEachTest = 5;
     String userName = "";
     public static int numberOfStepsInSudoku = 0;
     public static int numberOfRoundsInMemoryGame = 0;
@@ -72,10 +72,10 @@ public class Main extends Application {
     }
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
-//        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
-//        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
-//        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
-//        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
+        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
+        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
+        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
+        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
 //        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
 //        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
 //        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
