@@ -223,7 +223,10 @@ public class Controller implements Initializable {
         }
         public void modifyPlayer(int val, int row, int col) throws ValueError {
             if (val >= 0 && val <= 9)
+            {
                 player[row][col] = val;
+                Main.numberOfStepsInSudoku += 1;
+            }
             else
                 throw new ValueError("Value passed to player falls out of range");
         }

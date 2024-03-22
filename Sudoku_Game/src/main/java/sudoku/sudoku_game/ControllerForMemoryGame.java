@@ -102,6 +102,7 @@ public class ControllerForMemoryGame implements Initializable {
             timeline.setCycleCount(pattern.size());
             timeline.play();
         });
+        Main.numberOfRoundsInMemoryGame += 1;
         pause.play();
 
     }

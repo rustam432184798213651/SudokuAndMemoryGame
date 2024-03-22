@@ -3,6 +3,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,9 +22,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import java.io.IOException;
@@ -31,13 +36,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 9;
+    int numberOfQuestionsForEachTest = 2;
+    public static int numberOfStepsInSudoku = 0;
+    public static int numberOfRoundsInMemoryGame = 0;
+    public static String choosenGame = "";
+    Stage stage = null;
     // For Logical test
     Text currentQuestion = new Text();
     int currentIndex = 0;
     String correctAnswer = "";
     int numberOfCorrectAnswers = 0;
     TextField answer = new TextField();
+    boolean gameIsFinished = false;
     ArrayList<Dictionary<String, String>> questions = new ArrayList<Dictionary<String, String>>();
 
     public Dictionary<String, String> generateQuestionWithAnswer(String question, String answer) {
@@ -49,13 +59,13 @@ public class Main extends Application {
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
         questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
-        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
-        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
-        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
-        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
-        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
-        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
-        questions.add(generateQuestionWithAnswer("Человек научился у пауков строить подвесные мосты, у кошек перенял диафрагму в фотоаппарате и светоотражающие дорожные знаки. А какое изобретение появилось благодаря змеям?", "Шприц"));
+//        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
+//        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
+//        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
+//        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
+//        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
+//        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
+//        questions.add(generateQuestionWithAnswer("Человек научился у пауков строить подвесные мосты, у кошек перенял диафрагму в фотоаппарате и светоотражающие дорожные знаки. А какое изобретение появилось благодаря змеям?", "Шприц"));
     }
 
     // For memory test
@@ -204,6 +214,13 @@ public class Main extends Application {
                     if(numberOfTests.get() == 0) {
                         timeline.stop();
                         stage.close();
+                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                            @Override
+                            public void handle(WindowEvent t) {
+                                gameIsFinished = true;
+                                System.out.println("Something happened");
+                            }
+                        });
                         BorderPane borderPane = new BorderPane();
                         currentQuestion = new Text(questions.getFirst().get("question"));
                         correctAnswer = questions.getFirst().get("answer");
@@ -276,12 +293,23 @@ public class Main extends Application {
         }
     }
     @Override
-    public void start(Stage stage) throws IOException, InterruptedException {
-
+    public void start(Stage stage_) throws IOException, InterruptedException {
+        stage = stage_;
         Tests tests = new Tests(stage);
         tests.run();
         Game game = new Game(stage);
         game.runGame();
+
+
+//        new Thread(
+//                ()-> {
+//                    while(!gameIsFinished) {
+//
+//                    }
+//                    System.out.println(numberOfCorrectAnswers);
+//                    System.out.println(numberOfCorrectAnswersForMemoryTest);
+//                }
+//        ).start();
 
 
 
@@ -308,16 +336,54 @@ public class Main extends Application {
         public void run() {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(ViewFileName));
             try {
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent windowEvent) {
+                        gameIsFinished = true;
+                        System.out.println("Changed gameIsFinished to true");
+                    }
+                });
                 Scene SCENE = new Scene(fxmlLoader.load(), width, height);
                 SCENE.getStylesheets().add(getClass().getResource(CssFileName).toExternalForm());
                 stage.setScene(SCENE);
                 stage.setResizable(false);
                 stage.show();
+
+                Timeline timeline2 = new Timeline();
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.001), event-> {
+                    if(gameIsFinished) {
+                        System.out.println("gameIsFinished, indeed.");
+                        timeline2.stop();
+                        StackPane pane = new StackPane();
+                        Text numberOfTriesOnMemoryGame = new Text("количество попыток: " + numberOfStepsInSudoku);
+                        Text correctAnswerOnMemory = new Text("количетсов правильных ответов на тест по памяти: " + numberOfCorrectAnswersForMemoryTest);
+                        Text correctAnswerOnLogic = new Text("количество правильных ответов на тест по логике: " + numberOfCorrectAnswers);
+                        GridPane grid = new GridPane();
+                        grid.add(numberOfTriesOnMemoryGame, 0, 0);
+                        grid.add(correctAnswerOnMemory, 0, 1);
+                        grid.add(correctAnswerOnLogic, 0, 2);
+
+                        pane.getChildren().add(grid);
+                        Scene SCENE2 = new Scene(pane, 500, 500);
+                        stage.setTitle("Memory Game");
+                        stage.setScene(SCENE2);
+                        stage.show();
+
+                    }
+                });
+                timeline2.getKeyFrames().add(keyFrame);
+
+                // Set the number of cycles (-1 for indefinite loop)
+                timeline2.setCycleCount(Timeline.INDEFINITE);
+
+                // Start the Timeline
+                timeline2.play();
             } catch (java.io.IOException er) {
                 System.err.println(er.getMessage());
             }
         }
     }
+    FXMLLoader fxmlLoader = null;
     public class MemoryGame {
         Stage stage = null;
         String ViewFileName = "ViewForMemoryGame.fxml";
@@ -325,12 +391,49 @@ public class Main extends Application {
             stage = stage_a;
         }
         public void run() {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(ViewFileName));
+            fxmlLoader = new FXMLLoader(Main.class.getResource(ViewFileName));
             try{
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent windowEvent) {
+                        gameIsFinished = true;
+                        System.out.println("Changed gameIsFinished to true");
+                    }
+                });
                 Scene SCENE = new Scene(fxmlLoader.load());
                 stage.setTitle("Memory Game");
                 stage.setScene(SCENE);
                 stage.show();
+
+                Timeline timeline2 = new Timeline();
+                KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.001), event-> {
+                    if(gameIsFinished) {
+                        System.out.println("gameIsFinished, indeed.");
+                        timeline2.stop();
+                        StackPane pane = new StackPane();
+                        Text numberOfTriesOnMemoryGame = new Text("количество попыток: " + numberOfRoundsInMemoryGame);
+                        Text correctAnswerOnMemory = new Text("количетсов правильных ответов на тест по памяти: " + numberOfCorrectAnswersForMemoryTest);
+                        Text correctAnswerOnLogic = new Text("количество правильных ответов на тест по логике: " + numberOfCorrectAnswers);
+                        GridPane grid = new GridPane();
+                        grid.add(numberOfTriesOnMemoryGame, 0, 0);
+                        grid.add(correctAnswerOnMemory, 0, 1);
+                        grid.add(correctAnswerOnLogic, 0, 2);
+
+                        pane.getChildren().add(grid);
+                        Scene SCENE2 = new Scene(pane, 500, 500);
+                        stage.setTitle("Memory Game");
+                        stage.setScene(SCENE2);
+                        stage.show();
+
+                    }
+                });
+                timeline2.getKeyFrames().add(keyFrame);
+
+                // Set the number of cycles (-1 for indefinite loop)
+                timeline2.setCycleCount(Timeline.INDEFINITE);
+
+                // Start the Timeline
+                timeline2.play();
             }
             catch(java.io.IOException er) {
                 System.err.println(er.getMessage());
@@ -352,14 +455,23 @@ public class Main extends Application {
                 if(numberOfQuestionsForEachTest == currentIndex) {
                     timelineForGame.stop();
                     stage.close();
+
                     if(numberOfCorrectAnswersForMemoryTest > numberOfCorrectAnswers) {
                        Sudoku sd = new Sudoku(stage);
                        sd.run();
+                       Main.choosenGame = "Sudoku";
                     }
                     else {
                         MemoryGame mg = new MemoryGame(stage);
                         mg.run();
+                        Main.choosenGame = "MemoryGame";
                     }
+//                    try {
+//                        Files.write(Paths.get("result_of_players.txt"), ("number of correct answers for memory test: " + numberOfCorrectAnswersForMemoryTest).getBytes(), StandardOpenOption.APPEND);
+//                        Files.write(Paths.get("result_of_players.txt"), ("number of correct answers for logical test: " + numberOfCorrectAnswers).getBytes(), StandardOpenOption.APPEND);
+//                    }catch (IOException e) {
+//                        System.err.println(e.getMessage());
+//                    }
 
                 }
             });
