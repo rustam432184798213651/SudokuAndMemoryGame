@@ -17,3 +17,7 @@
     /*-fx-background-color: #4b5d5a;*/
     -fx-background-color: black;
 }
+
+#numberOfTriesOnSudoku, #correctAnswerOnMemory, #correctAnswerOnLogic, #numberOfTriesOnMemoryGame{
+    -fx-font-size: 25;
+}

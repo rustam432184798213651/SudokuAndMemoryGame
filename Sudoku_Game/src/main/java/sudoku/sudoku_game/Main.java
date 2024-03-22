@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 2;
+    int numberOfQuestionsForEachTest = 5;
     public static int numberOfStepsInSudoku = 0;
     public static int numberOfRoundsInMemoryGame = 0;
     public static String choosenGame = "";
@@ -59,9 +59,9 @@ public class Main extends Application {
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
         questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
-//        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
-//        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
-//        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
+        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
+        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
+        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
 //        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
 //        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
 //        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
@@ -352,20 +352,22 @@ public class Main extends Application {
                 Timeline timeline2 = new Timeline();
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.001), event-> {
                     if(gameIsFinished) {
-                        System.out.println("gameIsFinished, indeed.");
                         timeline2.stop();
-                        StackPane pane = new StackPane();
-                        Text numberOfTriesOnMemoryGame = new Text("количество попыток: " + numberOfStepsInSudoku);
+                        BorderPane pane = new BorderPane();
+                        Text numberOfTriesOnSudoku = new Text("количество попыток на судоку: " + numberOfStepsInSudoku);
+                        stage.setTitle("Results");
                         Text correctAnswerOnMemory = new Text("количетсов правильных ответов на тест по памяти: " + numberOfCorrectAnswersForMemoryTest);
                         Text correctAnswerOnLogic = new Text("количество правильных ответов на тест по логике: " + numberOfCorrectAnswers);
                         GridPane grid = new GridPane();
-                        grid.add(numberOfTriesOnMemoryGame, 0, 0);
+                        grid.add(numberOfTriesOnSudoku, 0, 0);
                         grid.add(correctAnswerOnMemory, 0, 1);
                         grid.add(correctAnswerOnLogic, 0, 2);
-
-                        pane.getChildren().add(grid);
-                        Scene SCENE2 = new Scene(pane, 500, 500);
-                        stage.setTitle("Memory Game");
+                        numberOfTriesOnSudoku.setId("numberOfTriesOnMemoryGame");
+                        correctAnswerOnMemory.setId("correctAnswerOnMemory");
+                        correctAnswerOnLogic.setId("correctAnswerOnLogic");
+                        pane.setCenter(grid);
+                        Scene SCENE2 = new Scene(pane, 800, 500);
+                        SCENE2.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
                         stage.setScene(SCENE2);
                         stage.show();
 
@@ -408,20 +410,22 @@ public class Main extends Application {
                 Timeline timeline2 = new Timeline();
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.001), event-> {
                     if(gameIsFinished) {
-                        System.out.println("gameIsFinished, indeed.");
                         timeline2.stop();
-                        StackPane pane = new StackPane();
-                        Text numberOfTriesOnMemoryGame = new Text("количество попыток: " + numberOfRoundsInMemoryGame);
+                        BorderPane pane = new BorderPane();
+                        stage.setTitle("Results");
+                        Text numberOfTriesOnMemoryGame = new Text("количество попыток на игру на память: " + numberOfRoundsInMemoryGame);
                         Text correctAnswerOnMemory = new Text("количетсов правильных ответов на тест по памяти: " + numberOfCorrectAnswersForMemoryTest);
                         Text correctAnswerOnLogic = new Text("количество правильных ответов на тест по логике: " + numberOfCorrectAnswers);
                         GridPane grid = new GridPane();
                         grid.add(numberOfTriesOnMemoryGame, 0, 0);
                         grid.add(correctAnswerOnMemory, 0, 1);
                         grid.add(correctAnswerOnLogic, 0, 2);
-
-                        pane.getChildren().add(grid);
-                        Scene SCENE2 = new Scene(pane, 500, 500);
-                        stage.setTitle("Memory Game");
+                        numberOfTriesOnMemoryGame.setId("numberOfTriesOnMemoryGame");
+                        correctAnswerOnMemory.setId("correctAnswerOnMemory");
+                        correctAnswerOnLogic.setId("correctAnswerOnLogic");
+                        pane.setCenter(grid);
+                        Scene SCENE2 = new Scene(pane, 800, 500);
+                        SCENE2.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
                         stage.setScene(SCENE2);
                         stage.show();
 
