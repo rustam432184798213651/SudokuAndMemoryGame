@@ -14,10 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -26,9 +23,14 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.Key;
 import java.util.*;
 
 import java.io.IOException;
@@ -36,7 +38,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main extends Application {
-    int numberOfQuestionsForEachTest = 5;
+    int numberOfQuestionsForEachTest = 1;
+    String userName = "";
     public static int numberOfStepsInSudoku = 0;
     public static int numberOfRoundsInMemoryGame = 0;
     public static String choosenGame = "";
@@ -50,6 +53,17 @@ public class Main extends Application {
     boolean gameIsFinished = false;
     ArrayList<Dictionary<String, String>> questions = new ArrayList<Dictionary<String, String>>();
 
+    public void updateLogFile(String str) {
+        {
+            try {
+                // append data to a file
+                Files.write(Paths.get("Sudoku_Game/src/main/resources/sudoku/sudoku_game/log.txt"), str.getBytes(),
+                        StandardOpenOption.APPEND);
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+        }
+    }
     public Dictionary<String, String> generateQuestionWithAnswer(String question, String answer) {
         Dictionary<String, String> dict= new Hashtable<>();
         dict.put("question", question);
@@ -58,10 +72,10 @@ public class Main extends Application {
     }
     public void fillQuestions() {
         questions.add(generateQuestionWithAnswer("Катя зарабатывает больше чем Света. Оля зарабатывает меньше всех. Кто зарабатывает больше всех?", "Катя"));
-        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
-        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
-        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
-        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
+//        questions.add(generateQuestionWithAnswer("Сколько месяцев в году имеют 28 дней?", "Все месяцы"));
+//        questions.add(generateQuestionWithAnswer("Летели утки: одна впереди и две позади, одна позади и две впереди, одна между двумя и три в ряд. Сколько всего летело уток?", "3"));
+//        questions.add(generateQuestionWithAnswer("Что в огне не горит и в воде не тонет?", "Лёд"));
+//        questions.add(generateQuestionWithAnswer("Каких камней в море нет?", "Сухих"));
 //        questions.add(generateQuestionWithAnswer("Какой болезнью на земле никто не болел?", "Морской"));
 //        questions.add(generateQuestionWithAnswer("Какая цифра уменьшится на треть, если её перевернуть?", "9"));
 //        questions.add(generateQuestionWithAnswer("Какой узел нельзя развязать?", "Железнодорожный"));
@@ -292,13 +306,67 @@ public class Main extends Application {
             }
         }
     }
+    boolean getUserName = false;
     @Override
     public void start(Stage stage_) throws IOException, InterruptedException {
         stage = stage_;
-        Tests tests = new Tests(stage);
-        tests.run();
-        Game game = new Game(stage);
-        game.runGame();
+        BorderPane pane = new BorderPane();
+        TextField nameOfUserField = new TextField();
+        Button nextButton = new Button("Продолжить");
+        Text txt = new Text("\t\t    Введите свое имя");
+        txt.setId("userPageTxt");
+
+        nameOfUserField.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                userName = ((TextField)keyEvent.getSource()).getText();
+            }
+        });
+        nextButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                getUserName = true;
+            }
+        });
+
+        int size = 100;
+        int sizeOfScene = 400;
+        nextButton.setMinSize(sizeOfScene, 50);
+        nextButton.setMaxSize(sizeOfScene, 50);
+        nameOfUserField.setMinSize(size*2, 50);
+        nameOfUserField.setMaxSize(size*2, 50);
+        nameOfUserField.setId("nameOfUsedField");
+
+        pane.setTop(txt);
+        pane.setCenter(nameOfUserField);
+
+        pane.setBottom(nextButton);
+        Scene sceneForUserName = new Scene(pane, sizeOfScene, sizeOfScene);
+        sceneForUserName.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
+
+        stage.setScene(sceneForUserName);
+        stage.show();
+
+
+        Timeline timeline3 = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(2.5), event -> {
+            if(getUserName) {
+                timeline3.stop();
+                Tests tests = new Tests(stage);
+                tests.run();
+                Game game = new Game(stage);
+                game.runGame();
+            }
+        });
+        timeline3.getKeyFrames().add(keyFrame);
+
+        // Set the number of cycles (-1 for indefinite loop)
+        timeline3.setCycleCount(Timeline.INDEFINITE);
+
+        // Start the Timeline
+        timeline3.play();
+
+
 
 
 //        new Thread(
@@ -353,6 +421,7 @@ public class Main extends Application {
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(0.001), event-> {
                     if(gameIsFinished) {
                         timeline2.stop();
+
                         BorderPane pane = new BorderPane();
                         Text numberOfTriesOnSudoku = new Text("количество попыток на судоку: " + numberOfStepsInSudoku);
                         stage.setTitle("Results");
@@ -365,6 +434,12 @@ public class Main extends Application {
                         numberOfTriesOnSudoku.setId("numberOfTriesOnMemoryGame");
                         correctAnswerOnMemory.setId("correctAnswerOnMemory");
                         correctAnswerOnLogic.setId("correctAnswerOnLogic");
+                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                            @Override
+                            public void handle(WindowEvent windowEvent) {
+                                updateLogFile("User name: " + userName +"\n" + numberOfTriesOnSudoku.getText() + "\n" + correctAnswerOnMemory.getText() + "\n" + correctAnswerOnLogic.getText() + "\n\n");
+                            }
+                        });
                         pane.setCenter(grid);
                         Scene SCENE2 = new Scene(pane, 800, 500);
                         SCENE2.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
@@ -423,6 +498,12 @@ public class Main extends Application {
                         numberOfTriesOnMemoryGame.setId("numberOfTriesOnMemoryGame");
                         correctAnswerOnMemory.setId("correctAnswerOnMemory");
                         correctAnswerOnLogic.setId("correctAnswerOnLogic");
+                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                            @Override
+                            public void handle(WindowEvent windowEvent) {
+                                updateLogFile("User name: " + userName +"\n" + numberOfTriesOnMemoryGame.getText() + "\n" + correctAnswerOnMemory.getText() + "\n" + correctAnswerOnLogic.getText() + "\n\n");
+                            }
+                        });
                         pane.setCenter(grid);
                         Scene SCENE2 = new Scene(pane, 800, 500);
                         SCENE2.getStylesheets().add(getClass().getResource("Style.css").toExternalForm());

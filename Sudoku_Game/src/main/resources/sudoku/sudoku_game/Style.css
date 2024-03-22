@@ -21,3 +21,11 @@
 #numberOfTriesOnSudoku, #correctAnswerOnMemory, #correctAnswerOnLogic, #numberOfTriesOnMemoryGame{
     -fx-font-size: 25;
 }
+
+#userPageTxt {
+    -fx-font-size: 20;
+}
+
+#nameOfUserField {
+    -fx-font-size: 20;
+}
